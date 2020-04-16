@@ -14,7 +14,7 @@ if __name__ == '__main__':
     for volume in volumes: 
         try:
             to_terminate.append(volume['VolumeId'])
-            print('Terminating EBS volume {0}: {1}'.format(volume['VolumeId'], reason]))
+            print('Terminating EBS volume {0}: {1}'.format(volume['VolumeId'], reason))
         except Exception as e:
             print('EBS volume {0} not considered for termination because of a processing error: {1}'.format(volume['VolumeId'], e))
 

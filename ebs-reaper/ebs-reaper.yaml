@@ -1,0 +1,32 @@
+apiVersion: v1
+description: Automatically clean up EBS volumes that are unattached
+
+parameters:
+  region:
+    description: The AWS region to run in
+    default: us-east-1
+  dryRun:
+    description: True if this workflow should only print the resources it would delete
+    default: 'true'
+  confetti:
+    description: Shoots confetti
+    default: 'true'
+
+steps:
+- name: describe-volumes
+  image: kenazk/ebs-describe-volumes
+  spec:
+    aws: &aws
+      region: !Parameter region
+      accessKeyID: !Secret aws.accessKeyID
+      secretAccessKey: !Secret aws.secretAccessKey
+- name: filter-instances
+  image: projectnebula/core:latest-python
+  spec:
+    terminationDateTag: !Parameter terminationDateTag
+    lifetimeTag: !Parameter lifetimeTag
+    instances: !Output {from: describe-instances, name: instances}
+  inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/ebs-reaper/ebs-reaper/filter-volumes.py?token=AALKB2LSYGNIMRSZLYPY6Y26UISNC
+
+
+      
