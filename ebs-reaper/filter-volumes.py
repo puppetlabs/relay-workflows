@@ -10,8 +10,7 @@ ni = Interface()
 if __name__ == '__main__':
     to_terminate = []
 
-    # volumes = filter(lambda i: len(i['Attachments']) == 0, ni.get(D.volumes))
-    volumes = ni.get(D.volumes)
+    volumes = filter(lambda i: len(i['Attachments']) == 0, ni.get(D.volumes))
     for volume in volumes: 
         try:
             to_terminate.append(volume['VolumeId'])
