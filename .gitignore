@@ -1,0 +1,5 @@
+#
+# Development artifacts
+#
+*.sw[onp]
+*.code-workspace
