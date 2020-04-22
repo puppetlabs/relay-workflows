@@ -1,0 +1,35 @@
+  apiVersion: v1
+  description: Automatically clean up ELB v2 load balancers that have no targets
+
+  parameters:
+    region:
+      description: The AWS region to run in
+      default: us-east-1
+    dryRun:
+      description: True if this workflow should only print the resources it would delete
+      default: 'true'
+  steps:
+  - name: describe-ELBv2-load-balancers
+    image: kenazk/elbv2-describe-load-balancers
+    spec:
+      aws: &aws
+        region: !Parameter region
+        accessKeyID: !Secret aws.accessKeyID
+        secretAccessKey: !Secret aws.secretAccessKey
+  - name: filter-empty-load-balancers
+    image: projectnebula/core:latest-python
+    spec:
+      aws: &aws
+        region: !Parameter region
+        accessKeyID: !Secret aws.accessKeyID
+        secretAccessKey: !Secret aws.secretAccessKey
+      elbs: !Output {from: describe-ELBv2-load-balancers, name: elbs}
+      confetti: true
+    inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/elb-reaper/elb-reaper/filter-loadbalancers.py
+  # - name: terminate-instances
+  #   image: kenazk/ebs-delete-volumes
+  #   when: 
+  #     - !Fn.equals [!Parameter dryRun, 'false']
+  #   spec:
+  #     aws: *aws
+  #     volumeIDs: !Output {from: filter-volumes, name: volumeIDs}
