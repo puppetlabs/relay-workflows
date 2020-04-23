@@ -23,7 +23,9 @@
         region: !Parameter region
         accessKeyID: !Secret aws.accessKeyID
         secretAccessKey: !Secret aws.secretAccessKey
-      elbs: !Output {from: describe-ELBv2-load-balancers, name: elbs}
+      loadbalancers: !Output {from: describe-ELBv2-load-balancers, name: loadbalancers}
+      targetgroups: !Output {from: describe-ELBv2-load-balancers, name: targetgroups}
+      targets: !Output {from: describe-ELBv2-load-balancers, name: targets}
       confetti: true
     inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/elb-reaper/elb-reaper/filter-loadbalancers.py
   # - name: terminate-instances
