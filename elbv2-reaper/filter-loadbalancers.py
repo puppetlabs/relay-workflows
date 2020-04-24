@@ -1,4 +1,18 @@
 #!/usr/bin/env python
+
+# File: filter-loadbalancers.py 
+# Description: This is an example script that you can author or modify that retrieves 
+#              a list of Load Balancers from the Relay Interface (in the form of parameters)
+#              and finds the ones that don't have any targets under any target groups. It then 
+#              sets the output variable `elb_arns` to the list of ELB v2 load balancers ARNs  
+#              to be terminated. 
+# Inputs:
+#   - loadbalancers - list of EBS volumes
+#   - targetgroups - dictionary of target groups (values) by ELB name (key)
+#   - targets - dictionary of targets (values) by target group (key)
+# Outputs:
+#   - elb_arns - list of ELB v2 load balancer ARNs to terminate
+
 import re
 import logging
 
