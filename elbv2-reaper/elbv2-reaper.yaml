@@ -27,7 +27,7 @@
       targetgroups: !Output {from: describe-ELBv2-load-balancers, name: targetgroups}
       targets: !Output {from: describe-ELBv2-load-balancers, name: targets}
       confetti: true
-    inputFile: https://gist.githubusercontent.com/kenazk/f34ef5ba0e043106aab3309b9a2e4b62/raw/0506011809c3a80f70ad9dc707211e1a2004d053/filter.py
+    inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/elb-reaper/elbv2-reaper/filter-loadbalancers.py
   - name: approval
     description: Wait for manual approval to delete load balancers 
     type: approval
