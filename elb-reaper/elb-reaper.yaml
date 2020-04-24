@@ -27,11 +27,16 @@
       targetgroups: !Output {from: describe-ELBv2-load-balancers, name: targetgroups}
       targets: !Output {from: describe-ELBv2-load-balancers, name: targets}
       confetti: true
-    inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/elb-reaper/elb-reaper/filter-loadbalancers.py
-  # - name: terminate-instances
-  #   image: kenazk/ebs-delete-volumes
-  #   when: 
-  #     - !Fn.equals [!Parameter dryRun, 'false']
-  #   spec:
-  #     aws: *aws
-  #     volumeIDs: !Output {from: filter-volumes, name: volumeIDs}
+    inputFile: https://gist.githubusercontent.com/kenazk/f34ef5ba0e043106aab3309b9a2e4b62/raw/0506011809c3a80f70ad9dc707211e1a2004d053/filter.py
+  - name: approval
+    description: Wait for manual approval to delete load balancers 
+    type: approval
+    dependsOn: filter-empty-load-balancers
+  - name: delete-load-balancers
+    image: kenazk/elbv2-delete-load-balancers
+    dependsOn: approval 
+    when: 
+      - !Fn.equals [!Parameter dryRun, 'false']
+    spec:
+      aws: *aws
+      elb_arns: !Output {from: filter-empty-load-balancers, name: elb_arns}
