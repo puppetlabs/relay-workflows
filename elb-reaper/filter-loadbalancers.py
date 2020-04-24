@@ -14,7 +14,7 @@ if __name__ == '__main__':
     target_groups = ni.get(D.targetgroups)
     target = ni.get(D.targets)
 
-    if len(elb_arns) == 0:
+    if len(elbs) == 0:
         print('No ELBs found! Exiting ...')
         exit
 
