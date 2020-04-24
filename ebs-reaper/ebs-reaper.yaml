@@ -20,7 +20,7 @@
     image: projectnebula/core:latest-python
     spec:
       volumes: !Output {from: describe-volumes, name: volumes}
-    inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/ebs-reaper/ebs-reaper/filter-volumes.py
+    inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/ebs-reaper/filter-volumes.py
   - name: approval
     description: Wait for approval to terminate volumes 
     type: approval

@@ -10,7 +10,7 @@
       default: 'true'
   steps:
   - name: describe-ELBv2-load-balancers
-    image: kenazk/elbv2-describe-load-balancers
+    image: projectnebula/elbv2-describe-load-balancers
     spec:
       aws: &aws
         region: !Parameter region
@@ -27,13 +27,13 @@
       targetgroups: !Output {from: describe-ELBv2-load-balancers, name: targetgroups}
       targets: !Output {from: describe-ELBv2-load-balancers, name: targets}
       confetti: true
-    inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/elb-reaper/elbv2-reaper/filter-loadbalancers.py
+    inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/elbv2-reaper/filter-loadbalancers.py
   - name: approval
     description: Wait for manual approval to delete load balancers 
     type: approval
     dependsOn: filter-empty-load-balancers
   - name: delete-load-balancers
-    image: kenazk/elbv2-delete-load-balancers
+    image: projectnebula/elbv2-delete-load-balancers
     dependsOn: approval 
     when: 
       - !Fn.equals [!Parameter dryRun, 'false']
