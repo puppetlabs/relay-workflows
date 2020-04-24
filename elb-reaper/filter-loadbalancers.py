@@ -8,7 +8,12 @@ ni = Interface()
 if __name__ == '__main__':
     to_terminate = []
 
-    elbs = ni.get(D.loadbalancers)
+    try:
+        elbs = ni.get(D.loadbalancers)
+    except: 
+        print('No ELBs found. Exiting')
+        exit()
+        
     all_target_groups = ni.get(D.targetgroups)
     all_targets = ni.get(D.targets)
 
