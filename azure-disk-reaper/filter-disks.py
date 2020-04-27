@@ -29,7 +29,7 @@ if __name__ == '__main__':
     for disk in disks: 
         try:
             to_terminate.append(disk)
-            logging.info('Terminating Azure Disk {0} with no attachments'.format(disk['name']))
+            logging.info('Adding Azure Disk {0} with no attachments to termination list'.format(disk['name']))
         except Exception as e:
             logging.error('Azure Disk {0} not considered for termination because of a processing error: {1}'.format(disk['name'], e))
 
@@ -38,5 +38,5 @@ if __name__ == '__main__':
         exit()
     else:    
         ni.outputs.set('disks', to_terminate)
-        logging.info('Setting output `disks` to {0}'.format(to_terminate))
+        logging.info('Setting output `disks` to list of {0} disks'.format(len(to_terminate)))
     
