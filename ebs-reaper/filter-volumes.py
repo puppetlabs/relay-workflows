@@ -17,7 +17,7 @@ from nebula_sdk import Interface, Dynamic as D
 
 # Setting up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
-logging.info('Running step filter-loadbalancers')
+logging.info('Running step filter-volumes')
 
 ni = Interface()
 
