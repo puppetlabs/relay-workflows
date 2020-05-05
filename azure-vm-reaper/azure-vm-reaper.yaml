@@ -7,25 +7,24 @@
       default: 'true'
   steps:
   - name: list-azure-vms
-    image: kenazk/azure-vms-list-vms
+    image: projectnebula/azure-vms-list-vms
     spec:
       azure: &azure
         subscription_id: !Secret azure.subscription_id
         client_id: !Secret azure.client_id
         secret: !Secret azure.secret 
         tenant_id: !Secret azure.tenant_id
-      resource_group: kenaz
   - name: filter-vms
     image: projectnebula/core:latest-python
     spec:
       virtual_machines: !Output {from: list-azure-vms, name: virtual_machines}
-    inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/azure-vm-reaper/azure-vm-reaper/filter-vms.py
+    inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/azure-vm-reaper/filter-vms.py
   - name: approval
     description: Wait for approval to terminate Azure virtual machines
     type: approval
     dependsOn: filter-vms
   - name: delete-azure-vms
-    image: kenazk/azure-vms-delete-vms
+    image: projectnebula/azure-vms-delete-vms
     dependsOn: approval
     when:
     - !Fn.equals [!Parameter dryRun, 'false']
