@@ -4,11 +4,11 @@
 # Description: This is an example script that you can author or modify that retrieves 
 #              a list of Azure Disks from the Relay Interface (in the form of parameters)
 #              and filters the Disks that are unattached. It then sets the output
-#              variable `disks` to the list of Azure Disks volumes that are unattached. 
+#              variable `resource_ids` to the list of Azure Disks volumes that are unattached. 
 # Inputs:
 #   - disks - list of Azure Disks 
 # Outputs:
-#   - disks - list of Azure Disks to be terminated in the subsequent step
+#   - resource_ids - list of Azure Disk resource IDs to be terminated in the subsequent step
 
 import re
 import logging
