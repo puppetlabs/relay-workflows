@@ -35,5 +35,5 @@
         client_id: !Secret azure.client_id
         secret: !Secret azure.secret 
         tenant_id: !Secret azure.tenant_id
-      virtual_machines: !Output {from: filter-vms, name: virtual_machines}
+      resource_ids: !Output {from: filter-vms, name: resource_ids}
       confetti: true
