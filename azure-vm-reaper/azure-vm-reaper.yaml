@@ -19,7 +19,7 @@
     image: projectnebula/core:latest-python
     spec:
       virtual_machines: !Output {from: list-azure-vms, name: virtual_machines}
-    inputFile: https://gist.githubusercontent.com/kenazk/65391d240a7b053d9dbb5b675717bb34/raw/e0b617a8987fad6b6d0bb4ee6b2b4d3ff43e6714/filter-vms.py
+    inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/azure-vm-reaper/azure-vm-reaper/filter-vms.py
   - name: approval
     description: Wait for approval to terminate Azure virtual machines
     type: approval
