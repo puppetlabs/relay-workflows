@@ -1,6 +1,6 @@
 # Automatically delete Azure Virtual Machines without tags
 
-This workflow looks at all of the Azure Virtual Machines in a given subscription and (optionally) resource group that are unattached and terminates the ones that have no tags.
+This workflow looks at all of the Azure Virtual Machines in a given subscription and (optionally) resource group that are untagged and terminates the ones that have no tags.
 
 ## Prerequisites
 
