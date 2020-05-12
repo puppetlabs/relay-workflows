@@ -44,21 +44,5 @@ steps:
   spec:
     aws: *aws
     instanceIDs: !Output {from: filter-instances, name: instanceIDs}
-- name: notify-dryRun 
-  image: projectnebula/slack-notification
-  dependsOn: filter-instances
-  when:
-  - !Fn.equals [!Parameter dryRun, 'true']
-  spec: 
-    apitoken: !Secret slack-token 
-    channel: "#nebula-workflows"
-    message: !Fn.concat ["[EC2 Reaper Dry Run] Instances that would be terminated: ", "Make up some instances here"]
-- name: notify-terminated-instances 
-  image: projectnebula/slack-notification
-  dependsOn: terminate-instances
-  spec: 
-    apitoken: !Secret slack-token 
-    channel: "#nebula-workflows"
-    message: !Fn.concat ["[EC2 Reaper] Instances that were terminated: ", "Make up some instances here"]
 
 
