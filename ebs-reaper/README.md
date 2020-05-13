@@ -1,7 +1,3 @@
-# Automatically delete EBS volumes without attachments 
-
-This workflow looks at all of the EBS volumes in a given account and region that are unattached. The termination criteria are:
-
 ## Prerequisites
 
 Before you run this workflow, you will need the following:

@@ -1,7 +1,3 @@
-# Automatically delete Azure Disks without attachments 
-
-This workflow looks at all of the Azure Disks in a given subscription and (optionally) resource group that are unattached and terminates them.
-
 ## Prerequisites
 
 Before you run this workflow, you will need the following:

@@ -1,5 +1,3 @@
-# Automatically terminate EC2 instances with configurable lifetimes
-
 This workflow looks at all of the EC2 instances in a given account and region and selects a subset of those to terminate. The termination criteria are:
 
 * Not tagged with a termination date or lifetime after 4 minutes
