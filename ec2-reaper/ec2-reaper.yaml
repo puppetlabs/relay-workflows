@@ -20,9 +20,8 @@ steps:
   image: projectnebula/ec2-describe-instances
   spec:
     aws: &aws
+      connection: !Connection { type: aws, name: my-aws-account }
       region: !Parameter region
-      accessKeyID: !Secret aws.accessKeyID
-      secretAccessKey: !Secret aws.secretAccessKey
 - name: filter-instances
   image: projectnebula/core:latest-python
   spec:
