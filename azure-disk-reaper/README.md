@@ -12,18 +12,23 @@ Before you run this workflow, you will need the following:
 ## Run the workflow
 
 Follow these steps to run the workflow:
-1. Add your Azure credentials as secrets:
-   1. Click **Edit** > **Secrets**.
-   2. Click **Define new secret** and use the following values:
-      - **KEY**: `azure.client_id`
+1. Add your Azure credentials as a Connection:
+   1. Click **Setup** 
+   2. Find the Connection named `my-azure-account` and click Edit(✎). Use the following values:
+      - **KEY**: `CLIENT ID`
       - **VALUE**: Enter your Azure Client ID associated with the service principal
-      - **KEY**: `azure.secret`
+      - **KEY**: `SECRET`
       - **VALUE**: Enter your Azure Secret associated with the service principal
-      - **KEY**: `azure.tenant_id`
+      - **KEY**: `TENANT ID`
       - **VALUE**: Enter your Azure Tenant ID associated with the service principal 
-      - **KEY**: `azure.subscription_id`
-      - **VALUE**: Enter your Azure Subscription ID  
+      - **KEY**: `SUBSCRIPTION ID`
+      - **VALUE**: Enter your Azure Subscription ID 
+   3. Click **Save**
 
 2. Click **Run workflow** and wait for the workflow run page to appear.
-3. **Warning:** If you run the workflow with the `dryRun` parameter set to
+3. Supply following parameters to the modal:
+   - **KEY**: `dryRun`
+   - **VALUE**: True if this workflow should only print the resources it would delete
+
+4. **Warning:** If you run the workflow with the `dryRun` parameter set to
    `false`, volumes that are unattached will immediately be terminated.

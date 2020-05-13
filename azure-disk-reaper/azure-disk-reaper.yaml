@@ -10,10 +10,7 @@
     image: projectnebula/azure-disks-list-disks
     spec:
       azure: &azure
-        subscription_id: !Secret azure.subscription_id
-        client_id: !Secret azure.client_id
-        secret: !Secret azure.secret 
-        tenant_id: !Secret azure.tenant_id
+        connection: !Connection { type: azure, name: my-azure-account }
   - name: filter-disks
     image: projectnebula/core:latest-python
     spec:
@@ -29,10 +26,6 @@
     when:
     - !Fn.equals [!Parameter dryRun, 'false']
     spec:
-      azure: &azure
-        subscription_id: !Secret azure.subscription_id
-        client_id: !Secret azure.client_id
-        secret: !Secret azure.secret 
-        tenant_id: !Secret azure.tenant_id
-      resource_ids: !Output {from: filter-disks, name: resource_ids}
+      azure: *azure
+      resourceIDs: !Output {from: filter-disks, name: resourceIDs}
       confetti: true
