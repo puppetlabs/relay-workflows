@@ -10,14 +10,11 @@
     image: projectnebula/azure-vms-list-vms
     spec:
       azure: &azure
-        subscription_id: !Secret azure.subscription_id
-        client_id: !Secret azure.client_id
-        secret: !Secret azure.secret 
-        tenant_id: !Secret azure.tenant_id
+        connection: !Connection { type: azure, name: my-azure-account }
   - name: filter-vms
     image: projectnebula/core:latest-python
     spec:
-      virtual_machines: !Output {from: list-azure-vms, name: virtual_machines}
+      virtualMachines: !Output {from: list-azure-vms, name: virtualMachines}
     inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/azure-vm-reaper/filter-vms.py
   - name: approval
     description: Wait for approval to terminate Azure virtual machines
@@ -29,10 +26,6 @@
     when:
     - !Fn.equals [!Parameter dryRun, 'false']
     spec:
-      azure: &azure
-        subscription_id: !Secret azure.subscription_id
-        client_id: !Secret azure.client_id
-        secret: !Secret azure.secret 
-        tenant_id: !Secret azure.tenant_id
-      resource_ids: !Output {from: filter-vms, name: resource_ids}
+      azure: *azure
+      resourceIDs: !Output {from: filter-vms, name: resourceIDs}
       confetti: true

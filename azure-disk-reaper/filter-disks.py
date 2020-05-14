@@ -8,22 +8,20 @@
 # Inputs:
 #   - disks - list of Azure Disks 
 # Outputs:
-#   - resource_ids - list of Azure Disk resource IDs to be terminated in the subsequent step
+#   - resourceIDs - list of Azure Disk resource IDs to be terminated in the subsequent step
 
 import re
 import logging
 
 from nebula_sdk import Interface, Dynamic as D
 
-print('Running step filter-disks')
-
-ni = Interface()
+relay = Interface()
 
 if __name__ == '__main__':
     to_terminate = []
 
     # Filtering volumes with no attachments
-    disks = filter(lambda i: i['disk_state'] == 'Unattached', ni.get(D.disks))
+    disks = filter(lambda i: i['disk_state'] == 'Unattached', relay.get(D.disks))
     for disk in disks: 
         try:
             to_terminate.append(disk['id'])
@@ -36,6 +34,6 @@ if __name__ == '__main__':
         print('No volumes to terminate! Exiting.')
         exit()
     else:
-        print('Setting output `resource_ids` to list of {0} disks'.format(len(to_terminate)))    
-        ni.outputs.set('resource_ids', to_terminate)
+        print('Setting output `resourceIDs` to list of {0} disks'.format(len(to_terminate)))    
+        relay.outputs.set('resourceIDs', to_terminate)
     
