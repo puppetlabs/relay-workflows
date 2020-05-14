@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
     # Adding list of Azure Disk resource ids to output `resource_ids`
     if len(to_terminate) == 0:
-        print('No volumes to terminate! Exiting.')
+        print('No Disks to terminate! Exiting.')
         exit()
     else:
         print('Setting output `resourceIDs` to list of {0} disks'.format(len(to_terminate)))    
