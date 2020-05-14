@@ -28,7 +28,7 @@ steps:
     terminationDateTag: !Parameter terminationDateTag
     lifetimeTag: !Parameter lifetimeTag
     instances: !Output {from: describe-instances, name: instances}
-  inputFile: workflow/filter-instances.py
+  inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/ec2-reaper/filter-instances.py
 - name: termination-approval
   description: Wait for approval to terminate instances 
   type: approval
