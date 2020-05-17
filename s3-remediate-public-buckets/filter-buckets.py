@@ -9,8 +9,9 @@ relay = Interface()
 
 
 bucketACLs = relay.get(D.bucketACLs)
+print (bucketACLs)
 for bucketACL in bucketACLs:
-    print ("The bucket acl is {}".format(bucketACL))
+    print ("The bucket acl is {}".format(bucketACL['Grantee']))
 
 # for instance in instances:
 #     try:
