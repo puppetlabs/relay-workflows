@@ -24,3 +24,4 @@ This repository contains workflows for [Relay](https://relay.sh). Feel free to u
 | [Restrict S3 buckets with WRITE access to all Authenticated Users](./s3-restrict-authenticated_user-write-buckets) | aws-s3 | Finds all buckets with 'WRITE' permissions to all Authenticated Users and marks them `private` | 
 | [Restrict S3 buckets with READ_ACP access to all Authenticated Users](./s3-restrict-authenticated_user-read_acp-buckets) | aws-s3 | Finds all buckets with 'READ_ACP' permissions to all Authenticated Users and marks them `private` | 
 | [Restrict S3 buckets with WRITE_ACP access to all Authenticated Users](./s3-restrict-authenticated_user-write_acp-buckets) | aws-s3 | Finds all buckets with 'WRITE_ACP' permissions to all Authenticated Users and marks them `private` | 
+| [Remediate unencrypted S3 buckets](./s3-remediate-unencrypted-buckets) | aws-s3 | Finds all unencrypted S3 buckets and encrypts them with default encryption | 

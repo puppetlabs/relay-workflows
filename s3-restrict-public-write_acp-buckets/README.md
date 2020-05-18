@@ -12,7 +12,7 @@ Before you run this workflow, you will need the following:
 - An AWS account.
 - An AWS IAM user with permissions to list and modify S3 buckets (if not
   run in dry run mode).
-- One or more running S3 buckets that are public and provide 'WRITE' access.
+- One or more S3 buckets that are public and provide 'WRITE' access.
 
 ## Run the workflow
 
@@ -29,7 +29,7 @@ Follow these steps to run the workflow:
 2. Click **Run workflow** and wait for the workflow run page to appear.
 3. Supply following parameters to the modal:
    - **KEY**: `dryRun`
-   - **VALUE**: True if this workflow should only print the resources it would delete
+   - **VALUE**: True if you don't want to perform actual WRITE operations
 
 4. **Warning:** If you run the workflow with the `dryRun` parameter set to
    `false`, buckets not in compliance with this workflow policy will

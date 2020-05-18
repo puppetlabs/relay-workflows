@@ -38,7 +38,7 @@ Follow these steps to run the workflow:
    - **KEY**: `lifetimeTag`  
    - **VALUE**: The name of the tag to use for determining the lifetime  
    - **KEY**: `dryRun`  
-   - **VALUE**: True if this workflow should only print the resources it would delete  
+   - **VALUE**: True if you don't want to perform actual WRITE operations  
 
 4. **Warning:** If you run the workflow with the `dryRun` parameter set to
    `false`, instances not in compliance with this workflow policy will

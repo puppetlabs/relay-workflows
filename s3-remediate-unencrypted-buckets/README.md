@@ -1,10 +1,8 @@
-This workflow looks at all of the S3 buckets in a given account and restricts those that provide 'READ' access to all Authenticated Users. 
+This workflow finds all unencrypted S3 buckets in a given account and encrypts them
+with default encryption. 
 
-It evaluates all buckets for a grant that includes:
-- Group containing "http://acs.amazonaws.com/groups/global/AuthenticatedUsers"  
-- Permission containing "READ" 
-
-These buckets will be restricted to be 'private'. 
+For more information on default encryption, see [Amazon S3 Default Encryption for S3 Buckets
+](https://docs.aws.amazon.com/AmazonS3/latest/dev/bucket-encryption.html)
 
 ## Prerequisites
 
@@ -12,7 +10,7 @@ Before you run this workflow, you will need the following:
 - An AWS account.
 - An AWS IAM user with permissions to list and modify S3 buckets (if not
   run in dry run mode).
-- One or more S3 buckets that provide 'READ' access to all Authenticated Users.
+- One or more S3 buckets that are unencrypted.
 
 ## Run the workflow
 

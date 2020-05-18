@@ -3,7 +3,7 @@
 
   parameters:
     dryRun:
-      description: True if this workflow should only print the resources it would delete
+      description: True if you don't want to perform actual WRITE operations
       default: 'true'
   steps:
   - name: list-azure-vms
