@@ -12,7 +12,7 @@ parameters:
     description: The name of the tag to use for determining the lifetime
     default: lifetime
   dryRun:
-    description: True if this workflow should only print the resources it would delete
+    description: True if you don't want to perform actual WRITE operations
     default: 'true'
 
 steps:

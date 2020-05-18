@@ -1,0 +1,38 @@
+apiVersion: v1
+description: Find all publicly read-able S3 buckets and restricts them
+
+parameters:
+  dryRun:
+    description: True if this workflow should not actually modify buckets
+    default: 'true'
+
+steps:
+- name: list-buckets
+  image: projectnebula/s3-list-buckets
+  spec:
+    aws: &aws
+      connection: !Connection { type: aws, name: my-aws-account }
+- name: get-bucket-acls
+  image: projectnebula/s3-get-bucket-acls
+  spec:
+    aws: *aws
+    buckets: !Output {from: list-buckets, name: buckets}
+- name: filter-buckets
+  image: projectnebula/core:latest-python
+  spec:
+    bucketACLs: !Output {from: get-bucket-acls, name: bucketACLs}
+  inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/s3-restrict-public-read-buckets/filter-buckets.py
+- name: approval
+  description: Wait for approval to modify S3 buckets
+  type: approval
+  dependsOn: filter-buckets
+- name: modify-acls
+  image: projectnebula/s3-put-bucket-acls
+  dependsOn: approval
+  when:
+   - !Fn.equals [!Parameter dryRun, 'false']
+  spec:
+    aws: *aws
+    buckets: !Output {from: filter-buckets, name: buckets}
+    acl: private 
+    confetti: true

@@ -3,3 +3,4 @@
 #
 *.sw[onp]
 *.code-workspace
+*.flake8
