@@ -11,6 +11,7 @@ to_modify = []
 to_do_nothing = []
 
 bucketACLs = relay.get(D.bucketACLs)
+
 for bucketName in bucketACLs.keys():
     public_bucket = False
 
@@ -26,11 +27,11 @@ for bucketName in bucketACLs.keys():
     else:
         to_do_nothing.append(bucketName)
 
-print("\nFound {} buckets that DON'T have public WRITE permissions:".format(len(to_do_nothing)))
+print("\nFound {} bucket(s) that DON'T have public WRITE permissions:".format(len(to_do_nothing)))
 print(*[bucket for bucket in to_do_nothing], sep = "\n")
 
-print("\nFound {} buckets that have public WRITE permissions:".format(len(to_modify)))
+print("\nFound {} bucket(s) that have public WRITE permissions:".format(len(to_modify)))
 print(*[bucket for bucket in to_modify], sep = "\n")
 
-print('\nSetting output variable `buckets` with list of {} buckets with public WRITE permissions.'.format(len(to_modify)))
+print('\nSetting output variable `buckets` with list of {} bucket(s) with public WRITE permissions.'.format(len(to_modify)))
 relay.outputs.set('buckets', to_modify)
