@@ -1,10 +1,10 @@
-This workflow looks at all of the public S3 buckets in a given account and remediates those that provide 'WRITE' access. 
+This workflow looks at all of the public S3 buckets in a given account and restricts those that provide 'READ_ACP' access. 
 
 It evaluates all buckets for a grant that includes:
 - Group containing "http://acs.amazonaws.com/groups/global/AllUsers"  
-- Permission containing "WRITE" 
+- Permission containing "READ_ACP" 
 
-These buckets will be modified to be 'private'. 
+These buckets will be restricted to be 'private'. 
 
 ## Prerequisites
 
@@ -12,7 +12,7 @@ Before you run this workflow, you will need the following:
 - An AWS account.
 - An AWS IAM user with permissions to list and modify S3 buckets (if not
   run in dry run mode).
-- One or more running S3 buckets that are public and provide 'WRITE' access.
+- One or more running S3 buckets that are public and provide 'READ' access.
 
 ## Run the workflow
 
