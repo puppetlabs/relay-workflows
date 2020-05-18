@@ -3,8 +3,8 @@ This repository contains workflows for [Relay](https://relay.sh). Feel free to u
 
 | Category | Workflow      | Integrations  | Description  | 
 | -------- | ------------- | ------------- | ------------ |
-| Cost Optimization | [EC2 Reaper](./ec2-reaper) | aws-ec2 | Terminates EC2 instances not in compliance with a tagging policy. |
-| Cost Optimization | [EBS Reaper](./ebs-reaper) | aws-ebs | Deletes EBS volumes that are unattached | 
+| Cost Optimization | [Terminate EC2 instances without valid lifetime tag](./ec2-reaper) | aws-ec2 | Terminates EC2 instances not in compliance with a tagging policy: specifying a `lifetime` or `termination_date` tag. |
+| Cost Optimization | [Delete unattached EBS volumes](./ebs-reaper) | aws-ebs | Deletes EBS volumes that are unattached | 
 | Security | [Stop untagged EC2 instances](./ec2-stop-untagged-instances) | aws-ec2 | Stops untagged EC2 instances | 
 | Security | [Restrict publicly WRITE S3 buckets](./s3-restrict-public-write-buckets) | aws-s3 | Finds all buckets with public 'WRITE' permissions and marks them `private` | 
 | Security | [Restrict publicly READ S3 buckets](./s3-restrict-public-read-buckets) | aws-s3 | Finds all buckets with public 'READ' permissions and marks them `private` | 
@@ -14,5 +14,5 @@ This repository contains workflows for [Relay](https://relay.sh). Feel free to u
 | Security | [Restrict S3 buckets with WRITE access to all Authenticated Users](./s3-restrict-authenticated_user-write-buckets) | aws-s3 | Finds all buckets with 'WRITE' permissions to all Authenticated Users and marks them `private` | 
 | Security | [Restrict S3 buckets with READ_ACP access to all Authenticated Users](./s3-restrict-authenticated_user-read_acp-buckets) | aws-s3 | Finds all buckets with 'READ_ACP' permissions to all Authenticated Users and marks them `private` | 
 | Security | [Restrict S3 buckets with WRITE_ACP access to all Authenticated Users](./s3-restrict-authenticated_user-write_acp-buckets) | aws-s3 | Finds all buckets with 'WRITE_ACP' permissions to all Authenticated Users and marks them `private` | 
-| Cost Optimization | [Azure Disk Reaper](./azure-disk-reaper) | azure-disks | Deletes Azure Disks that are unattached |   
-| Cost Optimization | [Azure VM Reaper](./azure-vm-reaper) | azure-virtual-machines | Deletes Azure Virtual Machines that don't have any tags |   
+| Cost Optimization | [Delete unattached Azure Disks](./azure-disk-reaper) | azure-disks | Deletes Azure Disks that are unattached |   
+| Cost Optimization | [Delete untagged Azure Virtual Machines](./azure-vm-reaper) | azure-virtual-machines | Deletes Azure Virtual Machines that don't have any tags |   
