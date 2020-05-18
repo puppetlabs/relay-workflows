@@ -1,4 +1,4 @@
-This workflow looks at all of the public S3 buckets in a given account and restricts those that provide 'READ' access. 
+This workflow looks at all of the public S3 buckets in a given account and restricts those that provide 'READ' access to all authenticated users. 
 
 It evaluates all buckets for a grant that includes:
 - Group containing "http://acs.amazonaws.com/groups/global/AllUsers"  
