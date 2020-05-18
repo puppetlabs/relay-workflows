@@ -16,7 +16,7 @@ for bucketName in bucketACLs.keys():
 
     # If the URI of the grant is "http://acs/amazonaws.com/groups/global/AllUsers" and the permission contains "WRITE", adding to list to remediate.
     for grant in bucketACLs[bucketName]:
-        if grant['Grantee']['Type'] == "Group" and grant['Grantee']['URI'] == "http://acs.amazonaws.com/groups/global/AllUsers" and "READ" in str(grant['Permission']):
+        if grant['Grantee']['Type'] == "Group" and grant['Grantee']['URI'] == "http://acs.amazonaws.com/groups/global/AllUsers" and "WRITE" in str(grant['Permission']):
             public_bucket = True
         else:
             continue
