@@ -7,25 +7,30 @@ from nebula_sdk import Interface, Dynamic as D
 
 relay = Interface()
 
+to_modify = []
+to_do_nothing = []
 
 bucketACLs = relay.get(D.bucketACLs)
-print (bucketACLs)
-for bucketACL in bucketACLs:
-    print ("The bucket acl is {}".format(bucketACL['Grantee']))
+for bucketName in bucketACLs.keys():
+    public_bucket = False
 
-# for instance in instances:
-#     try:
-#         if instance['Tags'] is None: 
-#             to_stop.append(instance['InstanceId'])
-#         else:
-#             to_keep.append(instance['InstanceId'])
-#     except Exception as e:
-#             print('\nEC2 instance {0} not considered for termination because of a processing error: {1}'.format(instance['InstanceId'], e))
+    # If the URI of the grant is "http://acs/amazonaws.com/groups/global/AllUsers" and the permission contains "WRITE", adding to list to remediate.
+    for grant in bucketACLs[bucketName]:
+        if grant['Grantee']['Type'] == "Group" and grant['Grantee']['URI'] == "http://acs.amazonaws.com/groups/global/AllUsers" and "READ" in str(grant['Permission']):
+            public_bucket = True
+        else:
+            continue
+                
+    if public_bucket:
+        to_modify.append(bucketName)
+    else:
+        to_do_nothing.append(bucketName)
 
-# print('\nFound {} instances (with tags) to keep:'.format(len(to_keep)))
-# print(*[instance_id for instance_id in to_keep], sep = "\n") 
+print("\nFound {} buckets that DON'T have public WRITE permissions:".format(len(to_do_nothing)))
+print(*[bucket for bucket in to_do_nothing], sep = "\n")
 
-# print('\nFound {} instances without tags to stop:'.format(len(to_stop)))
-# print(*[instance_id for instance_id in to_stop], sep = "\n") 
+print("\nFound {} buckets that have public WRITE permissions:".format(len(to_modify)))
+print(*[bucket for bucket in to_modify], sep = "\n")
 
-# relay.outputs.set('instanceIDs', to_stop)
+print('\nSetting output variable `buckets` with list of {} buckets with public WRITE permissions.'.format(len(to_modify)))
+relay.outputs.set('buckets', to_modify)
