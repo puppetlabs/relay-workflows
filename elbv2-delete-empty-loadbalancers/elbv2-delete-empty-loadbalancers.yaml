@@ -1,0 +1,51 @@
+apiVersion: v1
+description: Delete ELB v2 load balancers that have no targets
+
+parameters:
+  region:
+    description: The AWS region to run in
+    default: us-east-1
+  dryRun:
+    description: True if this workflow should only print the resources it would delete
+    default: 'true'
+    
+steps:
+- name: describe-load-balancers
+  image: kenazk/elbv2-describe-load-balancers
+  spec:
+    aws: &aws
+      connection: !Connection { type: aws, name: my-aws-account }
+      region: !Parameter region
+
+- name: describe-target-groups
+  image: kenazk/elbv2-describe-target-groups
+  spec:
+    aws: *aws
+
+- name: describe-targets 
+  image: kenazk/elbv2-describe-targets
+  spec:
+    aws: *aws
+    targetgroups: !Output {from: describe-target-groups, name: targetgroups}
+
+- name: filter-empty-load-balancers
+  image: projectnebula/core:latest-python
+  spec:
+    loadbalancers: !Output {from: describe-load-balancers, name: loadbalancers}
+    targetgroups: !Output {from: describe-target-groups, name: targetgroups}
+    targets: !Output {from: describe-targets, name: targets}
+    inputFile: https://gist.githubusercontent.com/kenazk/ee82d1b57657140e1c4ba7a35030dbf1/raw/7903621070ae3d6342d95ba2307b6d5db49abe00/gistfile1.py
+    
+- name: approval
+  description: Wait for manual approval to delete load balancers 
+  type: approval
+  dependsOn: filter-empty-load-balancers
+
+- name: delete-load-balancers
+  image: kenazk/elbv2-delete-load-balancers
+  dependsOn: approval 
+  when: 
+    - !Fn.equals [!Parameter dryRun, 'false']
+  spec:
+    aws: *aws
+    loadbalancerARNs: !Output {from: filter-empty-load-balancers, name: loadbalancerARNs}

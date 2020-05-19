@@ -17,18 +17,30 @@ from nebula_sdk import Interface, Dynamic as D
 relay = Interface()
 
 loadbalancer_arns = list(map(lambda i: i['LoadBalancerArn'], relay.get(D.loadbalancers)))
+targets = relay.get(D.targets)
 
-for group in relay.get(D.targetgroups):
-    for arn in group['LoadBalancerArns']:
-        try:
-            loadbalancer_arns.remove(arn)
-        except:
-            pass
+to_terminate = []
+to_keep = []
 
-if len(loadbalancer_arns) == 0:
-    print('No empty load balancers! Exiting.')
+# Only 1 Load Balancer can be associated per Target Group - https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-limits.html
+for arn in loadbalancer_arns:
+    terminate = True 
+    for group in relay.get(D.targetgroups):
+        if arn in group['LoadBalancerArns'] and len(targets[group['TargetGroupArn']]) != 0:
+            terminate = False
+            to_keep.append(arn)
+    if terminate:
+        to_terminate.append(arn)
+
+print("\nLoad Balancers that are NOT empty:\n")
+print(*[a for a in to_keep], sep="\n")
+
+print("\nLoad Balancers that are empty:\n")
+print(*[a for a in to_terminate], sep="\n")
+
+if len(to_terminate) == 0:
     exit()
 else:
-    print('Setting output `loadbalancerARNs` to list of {} load balancers to terminate'.format(len(loadbalancer_arns)))
-    relay.outputs.set('loadbalancerARNs', loadbalancer_arns)
+    print('\nSetting output `loadbalancerARNs` to list of {} load balancers to terminate'.format(len(to_terminate)))
+    relay.outputs.set('loadbalancerARNs', to_terminate)
     
