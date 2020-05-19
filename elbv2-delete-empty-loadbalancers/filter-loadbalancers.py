@@ -3,9 +3,7 @@
 # File: filter-loadbalancers.py 
 # Description: This is an example script that you can author or modify that retrieves 
 #              a list of Load Balancers and Target Groups from the Relay Interface (in 
-#              the form of parameters) and filters the volumes that are unattached. It 
-#              then sets the output variable `loadbalancers` to the list of ELB v2 load 
-#              balancers that are empty. 
+#              the form of parameters) and filters the load balancers that are empty. 
 # Inputs:
 #   - loadbalancers - list of ELB v2 load balancers
 #   - targetgroups - list of target groups 
@@ -43,4 +41,3 @@ if len(to_terminate) == 0:
 else:
     print('\nSetting output `loadbalancerARNs` to list of {} load balancers to terminate'.format(len(to_terminate)))
     relay.outputs.set('loadbalancerARNs', to_terminate)
-    

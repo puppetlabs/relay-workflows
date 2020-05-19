@@ -7,7 +7,7 @@ Before you run this workflow, you will need the following:
 - An AWS account.
 - An AWS IAM user with permissions to list and delete ELBv2 load balancers (if not
   run in dry run mode).
-- One or more running ELBv2 load balancers that are empty (no targets). 
+- One or more ELBv2 load balancers that are empty (no targets). 
 
 ## Run the workflow
 

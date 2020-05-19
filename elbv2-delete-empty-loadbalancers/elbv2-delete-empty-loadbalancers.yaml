@@ -11,19 +11,19 @@ parameters:
     
 steps:
 - name: describe-load-balancers
-  image: kenazk/elbv2-describe-load-balancers
+  image: projectnebula/elbv2-describe-load-balancers
   spec:
     aws: &aws
       connection: !Connection { type: aws, name: my-aws-account }
       region: !Parameter region
 
 - name: describe-target-groups
-  image: kenazk/elbv2-describe-target-groups
+  image: projectnebula/elbv2-describe-target-groups
   spec:
     aws: *aws
 
 - name: describe-targets 
-  image: kenazk/elbv2-describe-targets
+  image: projectnebula/elbv2-describe-targets
   spec:
     aws: *aws
     targetgroups: !Output {from: describe-target-groups, name: targetgroups}
@@ -34,7 +34,7 @@ steps:
     loadbalancers: !Output {from: describe-load-balancers, name: loadbalancers}
     targetgroups: !Output {from: describe-target-groups, name: targetgroups}
     targets: !Output {from: describe-targets, name: targets}
-    inputFile: https://gist.githubusercontent.com/kenazk/ee82d1b57657140e1c4ba7a35030dbf1/raw/7903621070ae3d6342d95ba2307b6d5db49abe00/gistfile1.py
+  inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/elbv2-delete-empty-loadbalancers/filter-loadbalancers.py
     
 - name: approval
   description: Wait for manual approval to delete load balancers 
@@ -42,7 +42,7 @@ steps:
   dependsOn: filter-empty-load-balancers
 
 - name: delete-load-balancers
-  image: kenazk/elbv2-delete-load-balancers
+  image: projectnebula/elbv2-delete-load-balancers
   dependsOn: approval 
   when: 
     - !Fn.equals [!Parameter dryRun, 'false']
