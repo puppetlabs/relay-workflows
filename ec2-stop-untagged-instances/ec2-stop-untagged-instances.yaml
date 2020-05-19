@@ -20,7 +20,7 @@ steps:
   image: projectnebula/core:latest-python
   spec:
     instances: !Output {from: describe-instances, name: instances}
-  inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/development/ec2-stop-untagged-instances/filter-instances.py
+  inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/ec2-stop-untagged-instances/filter-instances.py
 - name: approval
   description: Wait for approval to stop instances 
   type: approval
