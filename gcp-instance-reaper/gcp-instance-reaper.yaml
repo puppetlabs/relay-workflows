@@ -1,0 +1,45 @@
+apiVersion: v1
+description: Automatically clean up GCP instances that do not have the correct labels
+
+parameters:
+  zone:
+    description: The GCP zone to run in
+    default: us-central1-a
+  terminationDateLabel:
+    description: The name of the label to use for determining the termination date
+    default: termination_date
+  lifetimeLabel:
+    description: The name of the label to use for determining the lifetime
+    default: lifetime
+  dryRun:
+    description: True if this workflow should only print the resources it would delete
+    default: 'true'
+
+steps:
+- name: list-instances
+  image: projectnebula/gcp-list-instances
+  spec:
+    google: &google
+      service_account_info: !Connection { type: gcp, name: my-gcp-account }
+      zone: !Parameter zone
+- name: filter-instances
+  image: projectnebula/core:latest-python
+  spec:
+    terminationDateLabel: !Parameter terminationDateLabel
+    lifetimeLabel: !Parameter lifetimeLabel
+    instances: !Output {from: list-instances, name: instances}
+  inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/gcp-instance-reaper/filter-instances.py
+- name: delete-approval
+  description: Wait for approval to delete instances 
+  type: approval
+  dependsOn: filter-instances
+  when: 
+    - !Fn.equals [!Parameter dryRun, 'false']
+- name: delete-instances
+  dependsOn: delete-approval
+  image: projectnebula/gcp-delete-instances
+  when: 
+    - !Fn.equals [!Parameter dryRun, 'false']
+  spec:
+    google: *google
+    instances: !Output {from: filter-instances, name: instances}
