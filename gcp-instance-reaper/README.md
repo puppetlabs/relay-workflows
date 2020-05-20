@@ -1,13 +1,17 @@
 This workflow looks at all of the GCP instances in a given account and zone and
 selects a subset of those to terminate. The termination criteria are:
 
-* Not tagged with a termination date or lifetime after 4 minutes
-* The `termination_date` or `lifetime` labels are present but cannot be parsed
+* Not labelled with a termination date or lifetime after 4 minutes
+* The `termination_date` or `lifetime` labels are present but cannot be parsed.
 * The `termination_date` or `lifetime` labels indicate that the instance has
-  expired
+  expired.
 
-An instance may be configured to never terminate if its `lifetime` tag has the
-special value `indefinite`.
+An instance may be configured to never terminate if its `lifetime` label has
+the special value `indefinite`. Other valid values for the `lifetime` label are
+of the form `<number><unit>` where `<number>` is any integer and `<unit>` is a
+time unit of `w` (weeks), `h` (hours), `d` (days)` or `m` (months). So, as an
+example, if the `lifetime` label for an instance has a value of `43w` then it
+should be terminated after it's 43 weeks old.
 
 ## Prerequisites
 
@@ -25,11 +29,11 @@ Follow these steps to run the workflow:
 2. Click **Run workflow** and wait for the workflow run page to appear.  
 3. Supply following parameters to the modal:  
    - **KEY**: `zone`  
-   - **VALUE**: The GCP zone to run in  
+   - **VALUE**: The GCP zone to run in.
    - **KEY**: `terminationDateLabel`  
-   - **VALUE**: The label to use for determining the termination date  
+   - **VALUE**: The label to use for determining the termination date.
    - **KEY**: `lifetimeLabel`  
-   - **VALUE**: The label to use for determining the lifetime  
+   - **VALUE**: The label to use for determining the lifetime.
    - **KEY**: `dryRun`  
    - **VALUE**: True if you don't want to perform actual WRITE operations  
 
