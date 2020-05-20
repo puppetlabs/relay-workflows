@@ -18,7 +18,7 @@ to_keep = []
 
 nics = relay.get(D.networkInterfaces)
 for nic in nics:
-    if 'virtualMachine' in nic.keys():
+    if 'virtual_machine' in nic.keys():
         to_keep.append(nic['id'])
     else:
         to_terminate.append(nic['id'])

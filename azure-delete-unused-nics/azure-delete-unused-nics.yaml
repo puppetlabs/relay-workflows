@@ -1,0 +1,31 @@
+  apiVersion: v1
+  description: Delete unused Azure network interfaces
+
+  parameters:
+    dryRun:
+      description: True if you don't want to perform actual WRITE operations
+      default: 'true'
+  steps:
+  - name: list-azure-nics
+    image: projectnebula/azure-network-list-nics
+    spec:
+      azure: &azure
+        connection: !Connection { type: azure, name: my-azure-account }
+  - name: filter-nics
+    image: projectnebula/core:latest-python
+    spec:
+      networkInterfaces: !Output {from: list-azure-nics, name: networkInterfaces}
+    inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/azure-delete-unused-nics/filter-nics.py
+  - name: approval
+    description: Wait for approval
+    type: approval
+    dependsOn: filter-nics
+  - name: delete-azure-nics
+    image: projectnebula/azure-network-delete-nics
+    dependsOn: approval
+    when:
+    - !Fn.equals [!Parameter dryRun, 'false']
+    spec:
+      azure: *azure
+      resourceIDs: !Output {from: filter-nics, name: resourceIDs}
+      confetti: true
