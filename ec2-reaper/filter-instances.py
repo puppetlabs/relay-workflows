@@ -1,4 +1,18 @@
 #!/usr/bin/env python
+
+# File: filter-instances.py 
+# Description: This is an example script that you can author or modify that retrieves 
+#              a list of Instances from the Relay Interface (in the form of parameters)
+#              and filters the instances that don't have a valid `lifetime` or `termination_date`
+#              tag. It then sets the output variable `instanceIDs` to the list of instances to
+#              terminate. 
+# Inputs:
+#   - terminationDateTag - user configurable tag indicating when instance should be terminated
+#   - lifetimeTag - user configurable tag indicating how long instance should live
+#   - instances - list of instances to filter
+# Outputs:
+#   - instanceIDs - list of instances to be terminated in the subsequent step
+
 import datetime
 import re
 

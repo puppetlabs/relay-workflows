@@ -10,33 +10,25 @@
 # Outputs:
 #   - volumeids - list of EBS volume ids to be terminated in the subsequent step
 
-import re
-import logging
-
 from nebula_sdk import Interface, Dynamic as D
 
-# Setting up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
-logging.info('Running step filter-volumes')
+relay = Interface()
 
-ni = Interface()
+to_terminate = []
 
-if __name__ == '__main__':
-    to_terminate = []
+# Filtering volumes with no attachments
+volumes = filter(lambda i: len(i['Attachments']) == 0, relay.get(D.volumes))
+for volume in volumes: 
+    try:
+        to_terminate.append(volume['VolumeId'])
+        print('Terminating EBS volume {0} with no attachments'.format(volume['VolumeId']))
+    except Exception as e:
+        print('EBS volume {0} not considered for termination because of a processing error: {1}'.format(volume['VolumeId'], e))
 
-    # Filtering volumes with no attachments
-    volumes = filter(lambda i: len(i['Attachments']) == 0, ni.get(D.volumes))
-    for volume in volumes: 
-        try:
-            to_terminate.append(volume['VolumeId'])
-            logging.info('Terminating EBS volume {0} with no attachments'.format(volume['VolumeId']))
-        except Exception as e:
-            logging.error('EBS volume {0} not considered for termination because of a processing error: {1}'.format(volume['VolumeId'], e))
+if len(to_terminate) == 0:
+    print('No volumes to terminate! Exiting.')
+    exit()
+else:    
+    relay.outputs.set('volumeIDs', to_terminate)
+    print('Setting output `volumeIDs` to {0}'.format(to_terminate))
 
-    if len(to_terminate) == 0:
-        logging.warning('No volumes to terminate! Exiting.')
-        exit()
-    else:    
-        ni.outputs.set('volumeIDs', to_terminate)
-        logging.info('Setting output `volumeIDs` to {0}'.format(to_terminate))
-    
