@@ -16,7 +16,7 @@ relay = Interface()
 to_terminate = []
 to_keep = []
 
-lbs = relay.get(D.loadBalancers) # Queries for `virtual_machines` parameter from Relay
+lbs = relay.get(D.loadBalancers)
 for lb in lbs:
     if len(lb['backend_address_pools']) == 0:
         to_terminate.append(lb['id'])
