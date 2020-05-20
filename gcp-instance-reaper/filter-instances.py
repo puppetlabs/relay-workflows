@@ -8,8 +8,7 @@ from nebula_sdk import Interface, Dynamic as D
 ni = Interface()
 
 # The `MINUTES_TO_WAIT` global variable is the number of minutes to wait for
-# a termination_date label to appear for the GCP instance. Please note that the
-# AWS Lambdas are limited to a 5 minute maximum for their total run time.
+# a termination_date label to appear for the GCP instance.
 MINUTES_TO_WAIT = 4
 
 # The Indefinite lifetime constant
