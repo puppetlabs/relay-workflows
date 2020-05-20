@@ -2,8 +2,8 @@
 
 Before you run this workflow, you will need the following:
 - An Azure Subscription
-- An Azure Service Principal with permissions to manage load balancers.
-- One or more Azure Load Balancers with zero back end configurations. 
+- An Azure Service Principal with permissions to manage Network Interfaces.
+- One or more unused Azure Network Interfaces (NIC). 
 
 ## Run the workflow
 
@@ -27,5 +27,5 @@ Follow these steps to run the workflow:
    - **VALUE**: True if you don't want to perform actual WRITE operations  
 
 4. **Warning:** If you run the workflow with the `dryRun` parameter set to
-   `false`, virtual machines that are untagged will immediately be terminated.
+   `false`, unused Network Interfaces will immediately be terminated.
 
