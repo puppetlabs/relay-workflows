@@ -1,6 +1,7 @@
   apiVersion: v1
   description: Automatically clean up EBS volumes that are unattached
 
+# Uncomment out this trigger to run this workflow hourly.
 # triggers:
 # - name: schedule
 #   source:
