@@ -34,7 +34,7 @@ Follow these steps to run the workflow:
 ## Run the workflow on a schedule  
 
 Follow these steps to run this workflow on a schedule:  
-1. Uncomment out the Trigger block in the workflow file:  
+-  Un-comment out the Trigger block in the workflow file:  
 
 > TIP: If you're using the Relay code editor, highlight the `triggers` section and type `⌘ + /` (Mac) or `Ctrl + /` (Windows) to uncomment.  
 
@@ -50,9 +50,9 @@ Follow these steps to run this workflow on a schedule:
 #       dryRun: true
 ```
 
-2. Configure the `schedule` trigger:  
+-  Configure the `schedule` trigger:  
    - Supply the run interval in [cron format](https://crontab.guru/).  
-3. Configure the following parameter bindings:  
+-  Configure the following parameter bindings:  
    - Specify the `region` to run in.  
    - Specify whether `dryRun` should be set to `true` or `false`.  
-4. Click "Save changes"
+-  Click **Save changes**

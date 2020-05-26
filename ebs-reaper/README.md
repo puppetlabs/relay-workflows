@@ -30,7 +30,8 @@ Follow these steps to run the workflow:
 
 ## Run the workflow on a schedule
 
-To run this workflow on a schedule, uncomment out the Trigger block in the workflow file:  
+Follow these steps to run this workflow on a schedule:  
+-  Un-comment out the Trigger block in the workflow file:  
 
 > TIP: If you're using the Relay code editor, highlight the `triggers` section and type `⌘ + /` (Mac) or `Ctrl + /` (Windows) to uncomment.  
 
@@ -44,9 +45,15 @@ To run this workflow on a schedule, uncomment out the Trigger block in the workf
 #     parameters:
 #       region: us-east-1
 #       dryRun: true
+#       lifetimeTag: lifetime
+#       terminationDateTag: termination_date
 ```
 
-Configure the following parameters:  
-- Supply the run interval in [cron format](https://crontab.guru/).  
-- Specify the `region` to run in.  
-- Specify whether `dryRun` should be set to `true` or `false`.  
+-  Configure the `schedule` trigger:  
+   - Supply the run interval in [cron format](https://crontab.guru/).  
+-  Configure the following parameter bindings:  
+   - Specify the `region` to run in.
+   - Specify the `lifetimeTag` to use.  
+   - Specify the `terminationDateTag` to use.     
+   - Specify whether `dryRun` should be set to `true` or `false`.  
+-  Click **Save changes**
