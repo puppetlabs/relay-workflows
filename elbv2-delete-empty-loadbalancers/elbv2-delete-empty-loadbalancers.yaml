@@ -51,6 +51,8 @@ steps:
   description: Wait for manual approval to delete load balancers 
   type: approval
   dependsOn: filter-empty-load-balancers
+  when:
+    - !Fn.equals [!Parameter dryRun, 'false']
 
 - name: delete-load-balancers
   image: projectnebula/elbv2-delete-load-balancers

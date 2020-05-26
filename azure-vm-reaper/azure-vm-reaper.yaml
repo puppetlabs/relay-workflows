@@ -30,6 +30,8 @@
     description: Wait for approval to terminate Azure virtual machines
     type: approval
     dependsOn: filter-vms
+    when:
+    - !Fn.equals [!Parameter dryRun, 'false']
   - name: delete-azure-vms
     image: projectnebula/azure-vms-delete-vms
     dependsOn: approval

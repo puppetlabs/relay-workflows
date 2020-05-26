@@ -36,6 +36,8 @@ steps:
   description: Wait for approval to modify S3 buckets
   type: approval
   dependsOn: filter-buckets
+  when:
+    - !Fn.equals [!Parameter dryRun, 'false']
 - name: encrypt-buckets
   image: projectnebula/s3-put-bucket-encryption
   dependsOn: approval

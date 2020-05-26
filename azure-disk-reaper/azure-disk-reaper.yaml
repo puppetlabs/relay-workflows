@@ -30,6 +30,8 @@
     description: Wait for approval to terminate disks
     type: approval
     dependsOn: filter-disks
+    when:
+    - !Fn.equals [!Parameter dryRun, 'false']
   - name: delete-disks
     image: projectnebula/azure-disks-delete-disks
     dependsOn: approval

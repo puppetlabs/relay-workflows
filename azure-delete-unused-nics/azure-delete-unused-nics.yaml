@@ -30,6 +30,8 @@
     description: Wait for approval
     type: approval
     dependsOn: filter-nics
+    when:
+    - !Fn.equals [!Parameter dryRun, 'false']
   - name: delete-azure-nics
     image: projectnebula/azure-network-delete-nics
     dependsOn: approval

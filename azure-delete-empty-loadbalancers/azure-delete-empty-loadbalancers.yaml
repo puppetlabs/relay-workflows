@@ -30,6 +30,8 @@
     description: Wait for approval
     type: approval
     dependsOn: filter-loadbalancers
+    when:
+    - !Fn.equals [!Parameter dryRun, 'false']
   - name: delete-azure-lbs
     image: projectnebula/azure-network-delete-load-balancers
     dependsOn: approval
