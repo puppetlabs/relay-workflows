@@ -1,16 +1,15 @@
   apiVersion: v1
   description: Delete empty Azure Load Balancers
 
-# Uncomment out this trigger to run this workflow hourly.
-# triggers:
-# - name: schedule
-#   source:
-#     type: schedule
-#     schedule: '0 * * * *'
-#   binding:
-#     parameters:
-#       region: us-east-1
-#       dryRun: true
+  # Uncomment out this trigger to run this workflow hourly.
+  # triggers:
+  # - name: schedule
+  #   source:
+  #     type: schedule
+  #     schedule: '0 * * * *'
+  #   binding:
+  #     parameters:
+  #       dryRun: true
 
   parameters:
     dryRun:

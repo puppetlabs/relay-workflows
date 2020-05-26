@@ -11,6 +11,8 @@ description: Automatically clean up EC2 instances that do not have the correct t
 #     parameters:
 #       region: us-east-1
 #       dryRun: true
+#       lifetimeTag: lifetime
+#       terminationDateTag: termination_date
 
 parameters:
   region:

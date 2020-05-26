@@ -9,7 +9,6 @@ description: Find all publicly write-able S3 buckets and restricts them
 #     schedule: '0 * * * *'
 #   binding:
 #     parameters:
-#       region: us-east-1
 #       dryRun: true
 
 parameters:

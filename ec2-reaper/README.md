@@ -28,7 +28,7 @@ Follow these steps to run the workflow:
       - **VALUE**: Enter your AWS access key id associated with the account  
       - **KEY**: `SECRET ACCESS KEY`  
       - **VALUE**: Enter your AWS secret access key associated with the account  
-   - 3. Click **Save**  
+   - Click **Save**  
       
 2. Click **Run workflow** and wait for the workflow run page to appear.  
 3. Supply following parameters to the modal:  
@@ -45,9 +45,10 @@ Follow these steps to run the workflow:
    `false`, instances not in compliance with this workflow policy will
    immediately be terminated.
 
-## Run the workflow on a schedule
+## Run the workflow on a schedule  
 
-To run this workflow on a schedule, uncomment out the Trigger block in the workflow file:  
+Follow these steps to run this workflow on a schedule:  
+1. Uncomment out the Trigger block in the workflow file:  
 
 > TIP: If you're using the Relay code editor, highlight the `triggers` section and type `⌘ + /` (Mac) or `Ctrl + /` (Windows) to uncomment.  
 
@@ -61,9 +62,15 @@ To run this workflow on a schedule, uncomment out the Trigger block in the workf
 #     parameters:
 #       region: us-east-1
 #       dryRun: true
+#       lifetimeTag: lifetime
+#       terminationDateTag: termination_date
 ```
 
-Configure the following parameters:  
-1. Supply the run interval in [cron format](https://crontab.guru/).  
-2. Specify the `region` to run in.  
-3. Specify whether `dryRun` should be set to `true` or `false`.  
+2. Configure the `schedule` trigger:  
+   - Supply the run interval in [cron format](https://crontab.guru/).  
+3. Configure the following parameter bindings:  
+   - Specify the `region` to run in.
+   - Specify the `lifetimeTag` to use.  
+   - Specify the `terminationDateTag` to use.     
+   - Specify whether `dryRun` should be set to `true` or `false`.  
+4. Click "Save changes"

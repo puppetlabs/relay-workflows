@@ -9,7 +9,6 @@ description: Find all S3 buckets with READ permissions for all Authenticated Use
 #     schedule: '0 * * * *'
 #   binding:
 #     parameters:
-#       region: us-east-1
 #       dryRun: true
 
 parameters:

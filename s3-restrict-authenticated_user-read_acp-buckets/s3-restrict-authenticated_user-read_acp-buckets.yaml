@@ -9,7 +9,6 @@ description: Find all S3 buckets with READ_ACP permissions for all Authenticated
 #     schedule: '0 * * * *'
 #   binding:
 #     parameters:
-#       region: us-east-1
 #       dryRun: true
 
 parameters:

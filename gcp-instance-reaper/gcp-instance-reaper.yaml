@@ -9,7 +9,9 @@ description: Automatically clean up GCP instances that do not have the correct l
 #     schedule: '0 * * * *'
 #   binding:
 #     parameters:
-#       region: us-east-1
+#       zone: us-central1-a
+#       terminationDateLabel: termination_date
+#       lifetimeLabel: lifetime
 #       dryRun: true
 
 parameters:

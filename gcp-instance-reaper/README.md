@@ -16,27 +16,57 @@ should be terminated after it's 43 weeks old.
 ## Prerequisites
 
 Before you run this workflow, you will need the following:
-- A GCP account.
+- A GCP account.  
 - An GCP service account with permissions to list and terminate GCP instances (if not
-  run in dry run mode).
+  run in dry run mode).  
 - One or more running GCP instances that are configured to use the
-  `termination_date` or `lifetime` labels.
+  `termination_date` or `lifetime` labels.  
 
 ## Run the workflow
 
-Follow these steps to run the workflow:
+Follow these steps to run the workflow:  
 1. Add your GCP service account credentials as a Connection:  
 2. Click **Run workflow** and wait for the workflow run page to appear.  
 3. Supply following parameters to the modal:  
    - **KEY**: `zone`  
-   - **VALUE**: The GCP zone to run in.
+   - **VALUE**: The GCP zone to run in.  
    - **KEY**: `terminationDateLabel`  
-   - **VALUE**: The label to use for determining the termination date.
+   - **VALUE**: The label to use for determining the termination date.  
    - **KEY**: `lifetimeLabel`  
-   - **VALUE**: The label to use for determining the lifetime.
+   - **VALUE**: The label to use for determining the lifetime.  
    - **KEY**: `dryRun`  
    - **VALUE**: True if you don't want to perform actual WRITE operations  
 
 4. **Warning:** If you run the workflow with the `dryRun` parameter set to
    `false`, instances not in compliance with this workflow policy will
-   immediately be terminated.
+   immediately be terminated.  
+
+## Run the workflow on a schedule  
+
+Follow these steps to run this workflow on a schedule:   
+1. Uncomment out the Trigger block in the workflow file:  
+
+> TIP: If you're using the Relay code editor, highlight the `triggers` section and type `⌘ + /` (Mac) or `Ctrl + /` (Windows) to uncomment.  
+
+```yaml
+# triggers:
+# - name: schedule
+#   source:
+#     type: schedule
+#     schedule: '0 * * * *'
+#   binding:
+#     parameters:
+#       zone: us-central1-a
+#       terminationDateLabel: termination_date
+#       lifetimeLabel: lifetime
+#       dryRun: true
+```
+
+2. Configure the `schedule` trigger:  
+   - Supply the run interval in [cron format](https://crontab.guru/).  
+3. Configure the following parameter bindings:  
+   - Specify the `zone` to run in. 
+   - Specify the `terminationLabel` to use.   
+   - Specify the `lifetimeLabel` to use.    
+   - Specify whether `dryRun` should be set to `true` or `false`.  
+4. Click "Save changes"

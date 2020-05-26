@@ -9,7 +9,6 @@ description: Find all publicly S3 buckets with WRITE_ACP permissions and restric
 #     schedule: '0 * * * *'
 #   binding:
 #     parameters:
-#       region: us-east-1
 #       dryRun: true
 
 parameters:
