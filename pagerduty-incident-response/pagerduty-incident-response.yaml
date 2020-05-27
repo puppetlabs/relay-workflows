@@ -1,0 +1,63 @@
+apiVersion: v1
+
+description: >
+  Create an issue in Jira and send a message to Slack whenever a PagerDuty
+  incident first occurs.
+
+parameters:
+  lowUrgencySlackChannel:
+    description: the Slack channel to send low-urgency notifications to
+    default: '#it'
+  highUrgencySlackChannel:
+    description: the Slack channel to send high-urgency notifications to
+    default: '#on-call'
+  incidentTitle:
+    description: a brief summary of the incident
+  incidentUrgency:
+    description: the urgency of the incident
+  incidentURL:
+    description: a link to more information about the incident
+  serviceName:
+    description: the service that triggered the incident
+
+locals:
+  message: &message !Fn.concat
+  - '⚠️ *<'
+  - !Parameter incidentURL
+  - '|'
+  - !Parameter incidentTitle
+  - '>* ⚠️'
+  - "\nAffected service: "
+  - !Parameter serviceName
+
+triggers:
+- name: pagerduty
+  source:
+    type: webhook
+    image: relaysh/pagerduty-trigger-incident-triggered
+  binding:
+    parameters:
+      incidentTitle: !Data title
+      incidentUrgency: !Data urgency
+      incidentURL: !Data appURL
+      serviceName: !Data serviceName
+
+steps:
+# - name: create-jira-issue
+#   image: relaysh/jira-step-issue-create
+- name: send-high-urgency-message-to-slack
+  image: relaysh/slack-step-message-send
+  when: !Fn.notEquals [!Parameter incidentUrgency, low]
+  spec:
+    connection: !Connection {type: slack, name: my-slack-account}
+    channel: !Parameter highUrgencySlackChannel
+    username: PagerDuty via Relay
+    message: *message
+- name: send-low-urgency-message-to-slack
+  image: relaysh/slack-step-message-send
+  when: !Fn.equals [!Parameter incidentUrgency, low]
+  spec:
+    connection: !Connection {type: slack, name: my-slack-account}
+    channel: !Parameter lowUrgencySlackChannel
+    username: PagerDuty via Relay
+    message: *message
