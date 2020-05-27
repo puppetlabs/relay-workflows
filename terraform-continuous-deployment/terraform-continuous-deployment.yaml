@@ -1,62 +1,62 @@
-  apiVersion: v1
-  description: Automatically run a Terraform plan when a GitHub PR is merged
+apiVersion: v1
+description: Automatically run a Terraform plan when a GitHub PR is merged
 
-  triggers:
-  - name: github-pr-merge
-    source:
-      type: webhook
-      image: relaysh/github-pr-merge-trigger
-    binding:
-      parameters:
-        repository: !Data repository
-        branch: !Data branch
-    when:
-    - !Fn.equals [!Data branch, "master"]
+triggers:
+- name: github-pr-merge
+  source:
+    type: webhook
+    image: relaysh/github-pr-merge-trigger
+  binding:
+    parameters:
+      repository: !Data repository
+      branch: !Data branch
+  when:
+  - !Fn.equals [!Data branch, "master"]
 
-  parameters:
-    repository:
-      description: The name of the repository
-    branch:
-      description: The branch that the PR was pulled into
-      default: master
-    terraformWorkspace:
-      description: The Terraform workspace to use
-      default: default
-    terraformPlanDir:
-      description: The directory of the Terraform plan
-    terraformCommand:
-      description: The Terraform command to run
-      default: apply
-    terraformPlanRepository:
-      description: The repository that holds the terraform plan
-    terraformPlanRepositoryBranch:
-      description: The repository branch to use when cloning the repository
-      default: master
-    terraformStateProvider:
-      description: The cloud storage provider to use for Terraform state storage (aws or gcp)
-      default: aws
-    terraformStateProviderConnectionName:
-      description: The name of the provider connection to use for Terraform state storage
-    sshKeyConnectionName:
-      description: The name of the ssh connection used to clone the terraform repository
-    sshKnownHosts:
-      description: The known_hosts content
+parameters:
+  repository:
+    description: The name of the repository
+  branch:
+    description: The branch that the PR was pulled into
+    default: master
+  terraformWorkspace:
+    description: The Terraform workspace to use
+    default: default
+  terraformPlanDir:
+    description: The directory of the Terraform plan
+  terraformCommand:
+    description: The Terraform command to run
+    default: apply
+  terraformPlanRepository:
+    description: The repository that holds the terraform plan
+  terraformPlanRepositoryBranch:
+    description: The repository branch to use when cloning the repository
+    default: master
+  terraformStateProvider:
+    description: The cloud storage provider to use for Terraform state storage (aws or gcp)
+    default: aws
+  terraformStateProviderConnectionName:
+    description: The name of the provider connection to use for Terraform state storage
+  sshKeyConnectionName:
+    description: The name of the ssh connection used to clone the terraform repository
+  sshKnownHosts:
+    description: The known_hosts content
 
-  steps:
-  - name: terraform-run
-    image: projectnebula/terraform
-    spec:
-      vars: !Fn.jsonUnmarshal [!Secret terraformVarsJSON ]
-      workspace: !Parameter terraformWorkspace
-      directory: !Parameter terraformPlanDir
-      command: !Parameter terraformCommand
-      provider: !Parameter terraformStateProvider
-      credentials: !Connection
-        type: !Parameter terraformStateProvider
-        name: !Parameter terraformStateProviderConnectionName
-      git: !Fn.merge
-      - !Connection { type: ssh, name: !Parameter sshKeyConnectionName }
-      - known_hosts: !Parameter sshKnownHosts
-        name: terraform-plan
-        repository: !Parameter terraformPlanRepository
-        branch: !Parameter terraformPlanRepositoryBranch
+steps:
+- name: terraform-run
+  image: projectnebula/terraform
+  spec:
+    vars: !Fn.jsonUnmarshal [!Secret terraformVarsJSON ]
+    workspace: !Parameter terraformWorkspace
+    directory: !Parameter terraformPlanDir
+    command: !Parameter terraformCommand
+    provider: !Parameter terraformStateProvider
+    credentials: !Connection
+      type: !Parameter terraformStateProvider
+      name: !Parameter terraformStateProviderConnectionName
+    git: !Fn.merge
+    - !Connection { type: ssh, name: !Parameter sshKeyConnectionName }
+    - known_hosts: !Parameter sshKnownHosts
+      name: terraform-plan
+      repository: !Parameter terraformPlanRepository
+      branch: !Parameter terraformPlanRepositoryBranch
