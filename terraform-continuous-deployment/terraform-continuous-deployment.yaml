@@ -5,7 +5,7 @@ triggers:
 - name: github-pr-merge
   source:
     type: webhook
-    image: relaysh/github-pr-merge-trigger
+    image: relaysh/github-trigger-pull-request-merged:latest
   binding:
     parameters:
       repository: !Data repository
@@ -15,7 +15,7 @@ triggers:
 
 parameters:
   repository:
-    description: The name of the repository
+    description: The name of the repository that had a PR merged
   branch:
     description: The branch that the PR was pulled into
     default: master
@@ -32,31 +32,18 @@ parameters:
   terraformPlanRepositoryBranch:
     description: The repository branch to use when cloning the repository
     default: master
-  terraformStateProvider:
-    description: The cloud storage provider to use for Terraform state storage (aws or gcp)
-    default: aws
-  terraformStateProviderConnectionName:
-    description: The name of the provider connection to use for Terraform state storage
-  sshKeyConnectionName:
-    description: The name of the ssh connection used to clone the terraform repository
-  sshKnownHosts:
-    description: The known_hosts content
 
 steps:
 - name: terraform-run
   image: projectnebula/terraform
   spec:
-    vars: !Fn.jsonUnmarshal [!Secret terraformVarsJSON ]
+    vars: !Fn.jsonUnmarshal [!Secret terraformVarsJSON]
     workspace: !Parameter terraformWorkspace
     directory: !Parameter terraformPlanDir
     command: !Parameter terraformCommand
-    provider: !Parameter terraformStateProvider
-    credentials: !Connection
-      type: !Parameter terraformStateProvider
-      name: !Parameter terraformStateProviderConnectionName
+    aws: !Connection { type: aws, name: terraform-state-provider }
     git: !Fn.merge
-    - !Connection { type: ssh, name: !Parameter sshKeyConnectionName }
-    - known_hosts: !Parameter sshKnownHosts
+      connection: !Connection { type: ssh, name: terraform-repository-key }
       name: terraform-plan
       repository: !Parameter terraformPlanRepository
       branch: !Parameter terraformPlanRepositoryBranch

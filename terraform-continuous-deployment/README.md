@@ -18,3 +18,14 @@ Before you run this workflow, you will need the following:
 4. Copy the trigger webhook URL and add it to your GitHub repository. You can do
    this through the repository settings under the "webhooks" subsection in
    GitHub.
+
+Note: The default state storage provider is AWS S3. If you would rather use a GCP
+storage bucket, then change how the credentials spec in the workflow:
+
+```
+...
+spec:
+  credentials:
+    credentials.json: !Connection { type: gcp, name: my-gcp-credentials }
+...
+```
