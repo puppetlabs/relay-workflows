@@ -8,10 +8,7 @@ triggers:
     image: relaysh/github-trigger-pull-request-merged:latest
   binding:
     parameters:
-      repository: !Data repository
-      branch: !Data branch
-  when:
-  - !Fn.equals [!Data branch, "master"]
+      terraformPlanRepository: !Data repositorySSHURL
 
 parameters:
   repository:
@@ -24,6 +21,7 @@ parameters:
     default: default
   terraformPlanDir:
     description: The directory of the Terraform plan
+    default: .
   terraformCommand:
     description: The Terraform command to run
     default: apply
@@ -34,8 +32,15 @@ parameters:
     default: master
 
 steps:
+# uncomment the following if you would like to approve the set
+# step manually instead of letting it runs automatically.
+#
+# - name: approval
+#   description: Wait for approval to run kubectl command
+#   type: approval
 - name: terraform-run
   image: projectnebula/terraform
+  # dependsOn: [approval]
   spec:
     vars: !Fn.jsonUnmarshal [!Secret terraformVarsJSON]
     workspace: !Parameter terraformWorkspace
