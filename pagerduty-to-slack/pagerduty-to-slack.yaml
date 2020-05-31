@@ -1,8 +1,7 @@
 apiVersion: v1
 
 description: >
-  Create an issue in Jira and send a message to Slack whenever a PagerDuty
-  incident first occurs.
+  Send a message to Slack whenever a PagerDuty incident first occurs.
 
 parameters:
   lowUrgencySlackChannel:
@@ -11,9 +10,6 @@ parameters:
   highUrgencySlackChannel:
     description: the Slack channel to send high-urgency notifications to
     default: '#on-call'
-  jiraProjectKey:
-    description: the JIRA project key to use when creating tickets
-    default: OPS
   incidentTitle:
     description: a brief summary of the incident
   incidentUrgency:
@@ -46,27 +42,7 @@ triggers:
       serviceName: !Data serviceName
 
 steps:
-- name: create-jira-issue
-  image: relaysh/jira-server-step-issue-create
-  spec:
-    connection:
-      url: !Secret jiraURL
-      username: !Secret jiraUsername
-      password: !Secret jiraToken
-    issue:
-      fields:
-        project:
-          key: !Parameter jiraProjectKey
-        type:
-          name: Task
-        summary: !Parameter incidentTitle
-        description: !Fn.concat
-        - 'A new PagerDuty incident occurred affecting the service '
-        - !Parameter serviceName
-        - '. For more information, see ['
-        - !Parameter incidentURL
-        - '].'
-- name: send-high-urgency-message-to-slack
+- name: high-urgency-message
   image: relaysh/slack-step-message-send
   when: !Fn.notEquals [!Parameter incidentUrgency, low]
   spec:
@@ -74,7 +50,7 @@ steps:
     channel: !Parameter highUrgencySlackChannel
     username: PagerDuty via Relay
     message: *message
-- name: send-low-urgency-message-to-slack
+- name: low-urgency-message
   image: relaysh/slack-step-message-send
   when: !Fn.equals [!Parameter incidentUrgency, low]
   spec:

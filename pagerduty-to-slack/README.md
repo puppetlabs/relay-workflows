@@ -1,6 +1,6 @@
-This workflow responds to a PagerDuty incident by creating an issue in Jira and
-sending a message to a Slack channel. The urgency of the incident determines
-which Slack channel the message goes to.
+This workflow responds to a PagerDuty incident by sending a message to a Slack 
+channel. The urgency of the incident determines which Slack channel the message 
+goes to.
 
 ## Prerequisites
 
@@ -8,8 +8,6 @@ Before you run this workflow, you will need the following:
 - A [Slack](https://slack.com/) workspace and a connection configured in Relay
   to that workspace.
 - A [PagerDuty](https://www.pagerduty.com/) account.
-- An instance of [Jira](https://www.atlassian.com/software/jira) available to
-  the internet. Jira Cloud instances are compatible with this workflow.
 
 ## Configure the workflow
 
@@ -18,21 +16,12 @@ in this workflow to run in your environment. The default configuration assumes:
 - Your Slack connection is called `my-slack-account`
 - You want high-urgency incidents to go to the `#on-call` Slack channel
 - You want low-urgency incidents to go to the `#it` Slack channel
-- You want Jira tickets to be created in the `OPS` project.
-
-You also need to define the following secrets to connect to your Jira instance:
-- `jiraURL`: The URL to the root of your Jira instance. For Jira Cloud, this is
-  `https://your-domain.atlassian.net`.
-- `jiraUsername`: The username to use when authenticating to Jira.
-- `jiraToken`: The [API token](https://confluence.atlassian.com/x/Vo71Nw) (for
-  Jira Cloud) or password to use when authenticating to Jira.
 
 ## Test the workflow
 
 You can test the workflow with dummy data by clicking the **Run** button. Ensure
-an appropriate issue is created in your Jira instance and the message you expect
-shows up in your Slack workspace. We recommend always testing workflows manually
-before configuring automated triggers.
+the message you expect shows up in your Slack workspace. We recommend always 
+testing workflows manually before configuring automated triggers.
 
 ## Set up the trigger
 
