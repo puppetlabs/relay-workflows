@@ -36,7 +36,7 @@ steps:
 # step manually instead of letting it runs automatically.
 #
 # - name: approval
-#   description: Wait for approval to run kubectl command
+#   description: Wait for approval to run terraform command
 #   type: approval
 - name: terraform-run
   image: projectnebula/terraform
