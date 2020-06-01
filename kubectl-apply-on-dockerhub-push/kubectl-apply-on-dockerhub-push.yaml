@@ -1,0 +1,60 @@
+apiVersion: v1
+description: >
+  Automatically run kubectl apply on a kubernetes cluster when
+  a new image tag is pushed to DockerHub.
+
+triggers:
+- name: dockerhub-image-pushed
+  source:
+    type: webhook
+    image: relaysh/dockerhub-trigger-pushed:latest
+  binding:
+    parameters:
+      tag: !Data tag
+      imageName: !Data name
+
+locals:
+  cluster: &cluster
+    name: cluster
+    url: !Secret cluster-master-url
+    cadata: !Secret cluster-cadata
+    token: !Secret cluster-token
+
+parameters:
+  tag:
+    description: image tag to change
+  imageName:
+    description: the image's name
+  deploymentName:
+    description: the deployment's name
+    default: busybox
+  containerName:
+    description: the name of the container for the deployment
+    default: busybox
+  namespace:
+    description: the namespace where your deployment lives
+    default: default
+
+steps:
+# uncomment the following if you would like to approve the set
+# step manually instead of letting it runs automatically.
+#
+# - name: approval
+#   description: Wait for approval to run kubectl command
+#   type: approval
+- name: kubectl-set-new-image
+  description: >
+    Sets a new image tag version for the deployment.
+    This uses the set command in kubectl to change the image
+    the deployment uses.
+  image: projectnebula/kubectl:latest
+  # if you are using the above approval, uncomment the following line
+  # dependsOn: approval
+  spec:
+    namespace: !Parameter namespace
+    cluster: *cluster
+    command: set
+    args:
+    - image
+    - !Fn.concat ["deployment/", !Parameter deploymentName]
+    - !Fn.concat [!Parameter containerName, "=", !Parameter imageName, ":", !Parameter tag]
