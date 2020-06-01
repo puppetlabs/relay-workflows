@@ -1,0 +1,54 @@
+apiVersion: v1
+description: Automatically run a Terraform plan when a GitHub PR is merged
+
+triggers:
+- name: github-pr-merge
+  source:
+    type: webhook
+    image: relaysh/github-trigger-pull-request-merged:latest
+  binding:
+    parameters:
+      terraformPlanRepository: !Data repositorySSHURL
+
+parameters:
+  repository:
+    description: The name of the repository that had a PR merged
+  branch:
+    description: The branch that the PR was pulled into
+    default: master
+  terraformWorkspace:
+    description: The Terraform workspace to use
+    default: default
+  terraformPlanDir:
+    description: The directory of the Terraform plan
+    default: .
+  terraformCommand:
+    description: The Terraform command to run
+    default: apply
+  terraformPlanRepository:
+    description: The repository that holds the terraform plan
+  terraformPlanRepositoryBranch:
+    description: The repository branch to use when cloning the repository
+    default: master
+
+steps:
+# uncomment the following if you would like to approve the set
+# step manually instead of letting it runs automatically.
+#
+# - name: approval
+#   description: Wait for approval to run terraform command
+#   type: approval
+- name: terraform-run
+  image: projectnebula/terraform
+  # dependsOn: [approval]
+  spec:
+    vars: !Fn.jsonUnmarshal [!Secret terraformVarsJSON]
+    workspace: !Parameter terraformWorkspace
+    directory: !Parameter terraformPlanDir
+    command: !Parameter terraformCommand
+    aws: !Connection { type: aws, name: terraform-state-provider }
+    git: !Fn.merge
+      connection: !Connection { type: ssh, name: terraform-repository-key }
+      name: terraform-plan
+      repository: !Parameter terraformPlanRepository
+      branch: !Parameter terraformPlanRepositoryBranch
