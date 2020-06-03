@@ -49,3 +49,5 @@ incident is triggered. For each of those services:
 
 Whenever an incident is triggered for the first time, this workflow will run.
 You can reuse the same webhook URL for many services.
+
+![Gif of setting up Pagerduty webhook to trigger Relay](../images/setup-pagerduty-webhook.gif)
