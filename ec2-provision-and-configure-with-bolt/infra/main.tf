@@ -12,10 +12,6 @@ resource "aws_security_group" "web_sg" {
   description = "Managed by Terraform"
   vpc_id      = local.workspace["vpc_id"]
 
-  tags = {
-    Name = "HelloWorldNebula"
-  }
-
   ingress {
     from_port   = 22
     to_port     = 22
@@ -43,10 +39,6 @@ resource "aws_instance" "web" {
   instance_type          = var.ec2_machine_type
   vpc_security_group_ids = [aws_security_group.web_sg.id]
   key_name               = local.workspace["key_name"]
-
-  tags = {
-    Name = "HelloWorldNebula"
-  }
 
   root_block_device {
     volume_type = "gp2"

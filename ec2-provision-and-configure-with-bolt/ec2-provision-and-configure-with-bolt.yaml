@@ -15,6 +15,9 @@ parameters:
     default: relay-bolt
   terraformStateBucket:
     description: The name of the bucket you'd like to store terraform state in
+  terraformStateFilename:
+    description: The name of the state file to use
+    default: bolt-workflow.tfstate
   terraformWorkspace:
     description: The name of the Terraform workspace to use
     default: default
@@ -33,6 +36,7 @@ steps:
     backendConfig:
       bucket: !Parameter terraformStateBucket
       region: !Parameter awsRegion
+      key: !Parameter terraformStateFilename
     vars:
       vpc_id: !Parameter vpcID
       aws_region: !Parameter awsRegion
