@@ -18,7 +18,7 @@ triggers:
 - name: datadog
   source:
     type: webhook
-    image: relay.sh/datadog-trigger-event-fired
+    image: relaysh/datadog-trigger-event-fired
   binding:
     parameters:
       eventBody: !Data body
@@ -27,7 +27,7 @@ triggers:
 
 steps:
 - name: jira-issue-create
-  image: relay.sh/jira-server-step-issue-create
+  image: relaysh/jira-server-step-issue-create
   when: !Fn.equals [!Parameter eventType, query_alert_monitor]
   spec:
     connection:
