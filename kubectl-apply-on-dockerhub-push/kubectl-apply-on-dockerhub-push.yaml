@@ -47,7 +47,7 @@ steps:
     Sets a new image tag version for the deployment.
     This uses the set command in kubectl to change the image
     the deployment uses.
-  image: projectnebula/kubectl:latest
+  image: relaysh/kubernetes-step-kubectl:latest
   # if you are using the above approval, uncomment the following line
   # dependsOn: approval
   spec:
