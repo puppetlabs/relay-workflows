@@ -31,7 +31,7 @@ parameters:
 
 steps:
 - name: provision-ec2-with-terraform
-  image: projectnebula/terraform
+  image: relaysh/terraform-step-terraform:latest
   spec:
     backendConfig:
       bucket: !Parameter terraformStateBucket
@@ -53,7 +53,7 @@ steps:
 - name: configure-instance-with-bolt
   dependsOn:
     - provision-ec2-with-terraform
-  image: projectnebula/bolt-run
+  image: relaysh/puppet-bolt-step-bolt-run:latest
   spec:
     type: plan
     name: !Parameter boltPlanName
