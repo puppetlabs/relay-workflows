@@ -1,0 +1,44 @@
+apiVersion: v1
+
+description: >
+  Create an issue in Jira when a new Datadog event is received
+
+parameters:
+  eventBody:
+    description: Datadog event body
+  eventTitle:
+    description: Datadog event title
+  eventType:
+    description: Datadog event type
+  jiraProjectKey:
+    description: the JIRA project key to use when creating tickets
+    default: OPS
+
+triggers:
+- name: datadog
+  source:
+    type: webhook
+    image: relay.sh/datadog-trigger-event-fired
+  binding:
+    parameters:
+      eventBody: !Data body
+      eventTitle: !Data title
+      eventType: !Data event_type
+
+steps:
+- name: jira-issue-create
+  image: relay.sh/jira-server-step-issue-create
+  when: !Fn.equals [!Parameter eventType, query_alert_monitor]
+  spec:
+    connection:
+      url: !Secret jiraURL
+      username: !Secret jiraUsername
+      password: !Secret jiraToken
+    issue:
+      fields:
+        description: !Fn.convertMarkdown [jira, !Parameter eventBody]
+        project:
+          key: !Parameter jiraProjectKey
+        summary: !Parameter eventTitle
+        type:
+          name: Task

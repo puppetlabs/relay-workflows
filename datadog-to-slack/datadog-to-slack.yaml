@@ -1,0 +1,37 @@
+apiVersion: v1
+
+description: >
+  Sends a Slack notification when a new Datadog event is received
+
+parameters:
+  slackChannel:
+    description: the Slack channel to send notifications to
+    default: '#ops'
+  eventTitle:
+    description: Datadog event title
+  eventType:
+    description: Datadog event type
+
+triggers:
+- name: datadog
+  source:
+    type: webhook
+    image: relay.sh/datadog-trigger-event-fired
+  binding:
+    parameters:
+      eventDate: !Data date
+      eventTitle: !Data title
+      eventType: !Data event_type
+
+steps:
+- name: slack-notify
+  image: relaysh/slack-step-message-send
+  when: !Fn.equals [!Parameter eventType, query_alert_monitor]
+  spec:
+    connection: !Connection [slack, slack-connection]
+    channel: !Parameter slackChannel
+    username: Datadog via Relay
+    message: !Fn.concat
+    - '⚠️ *'
+    - !Parameter eventTitle
+    - '* ⚠️'
