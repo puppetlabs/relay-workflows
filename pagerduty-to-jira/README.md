@@ -37,17 +37,17 @@ In the workflow overview page in Relay, find the webhook URL by navigating to
 the **Setup** sidebar. Copy the URL to your clipboard.
 
 In PagerDuty, determine which services you want to run the workflow when an
-incident is triggered. For each of those services:
+incident is triggered. For each of those services:  
 
-1. Click on the **Integrations** tab.
-2. At the bottom of the page, click **Add or manage extensions**.
-3. Create a **New Extension**:
-   - Extension Type: `Generic V2 Webhook`
-   - Name: `Relay`
-   - URL: Paste the webhook URL from your clipboard.
-4. Click **Save**.
+1. Click on the **Integrations** tab.  
+2. At the bottom of the page, click **Add or manage extensions**.  
+3. Create a **New Extension**:  
+   - Extension Type: `Generic V2 Webhook`  
+   - Name: `Relay`  
+   - URL: Paste the webhook URL from your clipboard.  
+4. Click **Save**.  
 
-Whenever an incident is triggered for the first time, this workflow will run.
-You can reuse the same webhook URL for many services.
+Whenever an incident is triggered for the first time, this workflow will run.  
+You can reuse the same webhook URL for many services.  
 
 ![Gif of setting up Pagerduty webhook to trigger Relay](../images/setup-pagerduty-webhook.gif)

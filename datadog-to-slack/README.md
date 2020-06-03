@@ -28,7 +28,7 @@ In Datadog, add a new webhook:
    - Additional properties can be added to the payload for workflow customization.
 4. Click **Save**.
 
-Configure the Datadog monitor:
+Configure the Datadog monitor:  
 1. Within the Monitor, click **Settings(⚙)** -> **Edit**  
 2. Under **Say what's happening**, add the above webhook with `@webhook-{name of webhook}` (e.g. `@webhook-relay`)  
 3. Click **Save**  
@@ -38,7 +38,7 @@ Configure the Datadog monitor:
 ## Testing Alerts  
 
 To test the Datadog alert:   
-1. Click **Settings(⚙)** -> **Edit** 
+1. Click **Settings(⚙)** -> **Edit**   
 2. Scroll to the bottom of the page and click **Test Notifications**  
 3. Select **Alert** (default)  
 4. Click **Run Test**   
