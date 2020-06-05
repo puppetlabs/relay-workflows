@@ -28,3 +28,4 @@ This repository contains workflows for [Relay](https://relay.sh). Feel free to u
 | Security | [Remove unused EC2 key pairs](./ec2-remove-unused-key-pairs) | aws-ec2 | Finds all unused EC2 key pairs and deletes them | 
 | Continuous Delivery | [Run Terraform when Pull Request merged in GitHub](./terraform-continuous-deployment) | terraform, github | Run Terraform command {plan, apply, etc} when a Pull Request is merged to a repository in GitHub. | |
 | Continuous Delivery | [Update Kubernetes deployment image tag on Docker Hub push](./kubectl-apply-on-dockerhub-push) | Kubernetes | Updates a deployment image using a Docker Hub webhook to inform relay when a new Docker image is available |
+| Provisioning | [Provision an EC2 instance and configure with a Bolt plan](./ec2-provision-and-configure-with-bolt) | aws-ec2 | Uses terraform to create and provision a new EC2 instance, then uses a remote Bolt plan to configure it |
