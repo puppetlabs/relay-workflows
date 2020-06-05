@@ -1,0 +1,48 @@
+apiVersion: v1
+
+description: >
+  Create an issue in Jira when a new PagerDuty incident occurs
+
+parameters:
+  jiraProjectKey:
+    description: the JIRA project key to use when creating tickets
+    default: OPS
+  incidentTitle:
+    description: a brief summary of the incident
+  incidentURL:
+    description: a link to more information about the incident
+  serviceName:
+    description: the service that triggered the incident
+
+triggers:
+- name: pagerduty
+  source:
+    type: webhook
+    image: relaysh/pagerduty-trigger-incident-triggered
+  binding:
+    parameters:
+      incidentTitle: !Data title
+      incidentURL: !Data appURL
+      serviceName: !Data serviceName
+
+steps:
+- name: create-jira-issue
+  image: relaysh/jira-server-step-issue-create
+  spec:
+    connection:
+      url: !Secret jiraURL
+      username: !Secret jiraUsername
+      password: !Secret jiraToken
+    issue:
+      fields:
+        project:
+          key: !Parameter jiraProjectKey
+        type:
+          name: Task
+        summary: !Parameter incidentTitle
+        description: !Fn.concat
+        - 'A new PagerDuty incident occurred affecting the service '
+        - !Parameter serviceName
+        - '. For more information, see ['
+        - !Parameter incidentURL
+        - '].'
