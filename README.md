@@ -22,3 +22,4 @@ This repository contains workflows for [Relay](https://relay.sh). Feel free to u
 | Security | [Restrict S3 buckets with WRITE_ACP access to all Authenticated Users](./s3-restrict-authenticated_user-write_acp-buckets) | aws-s3 | Finds all buckets with 'WRITE_ACP' permissions to all Authenticated Users and marks them `private` | 
 | Security | [Remediate unencrypted S3 buckets](./s3-remediate-unencrypted-buckets) | aws-s3 | Finds all unencrypted S3 buckets and encrypts them with default encryption | 
 | Security | [Remove unused EC2 key pairs](./ec2-remove-unused-key-pairs) | aws-ec2 | Finds all unused EC2 key pairs and deletes them | 
+| Continuous Delivery | [Update Kubernetes deployment image tag on Docker Hub push](./kubectl-apply-on-dockerhub-push) | Kubernetes | Updates a deployment image using a Docker Hub webhook to inform relay when a new Docker image is available |
