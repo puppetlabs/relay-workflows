@@ -27,3 +27,4 @@ This repository contains workflows for [Relay](https://relay.sh). Feel free to u
 | Security | [Remediate unencrypted S3 buckets](./s3-remediate-unencrypted-buckets) | aws-s3 | Finds all unencrypted S3 buckets and encrypts them with default encryption | 
 | Security | [Remove unused EC2 key pairs](./ec2-remove-unused-key-pairs) | aws-ec2 | Finds all unused EC2 key pairs and deletes them | 
 | Continuous Delivery | [Run Terraform when Pull Request merged in GitHub](./terraform-continuous-deployment) | terraform, github | Run Terraform command {plan, apply, etc} when a Pull Request is merged to a repository in GitHub. | |
+| Continuous Delivery | [Update Kubernetes deployment image tag on Docker Hub push](./kubectl-apply-on-dockerhub-push) | Kubernetes | Updates a deployment image using a Docker Hub webhook to inform relay when a new Docker image is available |
