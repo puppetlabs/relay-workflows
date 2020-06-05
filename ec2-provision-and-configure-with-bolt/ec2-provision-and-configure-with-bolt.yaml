@@ -1,0 +1,76 @@
+version: v1
+description: Use terraform to create an EC2 instance and then configure it with bolt
+
+parameters:
+  terraformRepository:
+    description: The git repository where bolt files are located
+    default: https://github.com/puppetlabs/relay-workflows
+  awsRegion:
+    description: The AWS region to deploy the EC2 instance
+    default: us-west-1
+  vpcID:
+    description: The AWS vpc id to deploy EC2 instance
+  sshKeyName:
+    description: The AWS ssh key for the EC2 instance
+    default: relay-bolt
+  terraformStateBucket:
+    description: The name of the bucket you'd like to store terraform state in
+  terraformStateFilename:
+    description: The name of the state file to use
+    default: bolt-workflow.tfstate
+  terraformWorkspace:
+    description: The name of the Terraform workspace to use
+    default: default
+  boltRepository:
+    description: The git repository URL where bolt files are located
+  boltPlanName:
+    description: The name of the bolt plan to run
+  boltProjectDir:
+    description: The path to the bolt directory in boltRepository
+    default: Boltdir
+
+steps:
+- name: provision-ec2-with-terraform
+  image: relaysh/terraform-step-terraform:latest
+  spec:
+    backendConfig:
+      bucket: !Parameter terraformStateBucket
+      region: !Parameter awsRegion
+      key: !Parameter terraformStateFilename
+    vars:
+      vpc_id: !Parameter vpcID
+      aws_region: !Parameter awsRegion
+      key_name: !Parameter sshKeyName
+    workspace: !Parameter terraformWorkspace
+    directory: ec2-provision-and-configure-with-bolt/infra/
+    aws: !Connection { type: aws, name: terraform-provider }
+    # Note that the terraform files are pulled from a public repository,
+    # so we don't need an ssh key here like we do below.
+    git:
+      name: relay-workflows
+      repository: !Parameter terraformRepository
+
+- name: configure-instance-with-bolt
+  dependsOn:
+    - provision-ec2-with-terraform
+  image: relaysh/puppet-bolt-step-bolt-run:latest
+  spec:
+    type: plan
+    name: !Parameter boltPlanName
+    projectDir: !Parameter boltProjectDir
+    installModules: true
+    targets: !Output [provision-ec2-with-terraform, EC2_IP]
+    credentials:
+      id_rsa: !Connection { type: ssh, name: bolt-ec2-private-key }
+    transport:
+      type: ssh
+      user: ubuntu
+      privateKey: id_rsa
+      verifyHost: false
+    git:
+      # Since the bolt plan might be pulled from a private repository, we've included
+      # a parameter here for cloning in that scenario. If you are cloning from a public
+      # repository and no public key is required, you can remove the connection line below.
+      connection: !Connection { type: ssh, name: bolt-repo-private-key }
+      name: bolt-repository
+      repository: !Parameter boltRepository
