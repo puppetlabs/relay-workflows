@@ -1,0 +1,50 @@
+apiVersion: v1
+
+description: >
+  Send someone an SMS message whenever a PagerDuty incident first occurs.
+
+parameters:
+  phoneNumber:
+    description: the phone number to deliver the message to
+  incidentTitle:
+    description: a brief summary of the incident
+  incidentUrgency:
+    description: the urgency of the incident
+  incidentURL:
+    description: a link to more information about the incident
+  serviceName:
+    description: the service that triggered the incident
+
+locals:
+  message: &message !Fn.concat
+  - '⚠️ '
+  - '|'
+  - !Parameter incidentTitle
+  - ' ⚠️'
+  - "\nAffected service: "
+  - !Parameter serviceName
+  - "\nDetails: "
+  - !Parameter incidentURL
+
+triggers:
+- name: pagerduty
+  source:
+    type: webhook
+    image: relaysh/pagerduty-trigger-incident-triggered
+  binding:
+    parameters:
+      incidentTitle: !Data title
+      incidentUrgency: !Data urgency
+      incidentURL: !Data appURL
+      serviceName: !Data serviceName
+
+steps:
+- name: notify-via-twilio
+  image: projectnebula/relay-twilio-send-sms
+  spec:
+    twilio: &twilio
+      accountSID: !Secret twilioAccountSID
+      authToken: !Secret twilioAuthToken
+    from: !Secret twilioPhoneNumber
+    to: !Parameter phoneNumber
+    body: *message
