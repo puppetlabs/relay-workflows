@@ -18,9 +18,7 @@ parameters:
 locals:
   message: &message !Fn.concat
   - '⚠️ '
-  - '|'
   - !Parameter incidentTitle
-  - ' ⚠️'
   - "\nAffected service: "
   - !Parameter serviceName
   - "\nDetails: "
