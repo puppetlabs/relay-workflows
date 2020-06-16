@@ -40,7 +40,7 @@ steps:
     - !Fn.equals [!Parameter dryRun, 'false']
 - name: stop-instances
   dependsOn: approval
-  image: relaysh/	aws-ec2-step-instances-stop
+  image: relaysh/aws-ec2-step-instances-stop
   when: 
     - !Fn.equals [!Parameter dryRun, 'false']
   spec:

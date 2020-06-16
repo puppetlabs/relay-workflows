@@ -50,7 +50,7 @@ steps:
     - !Fn.equals [!Parameter dryRun, 'false']
 - name: terminate-instances
   dependsOn: termination-approval
-  image: relaysh/	aws-ec2-step-instances-terminate
+  image: relaysh/aws-ec2-step-instances-terminate
   when: 
     - !Fn.equals [!Parameter dryRun, 'false']
   spec:
