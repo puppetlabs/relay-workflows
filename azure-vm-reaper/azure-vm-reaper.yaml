@@ -17,12 +17,12 @@
       default: 'true'
   steps:
   - name: list-azure-vms
-    image: projectnebula/azure-vms-list-vms
+    image: relaysh/azure-virtual-machines-step-vm-list
     spec:
       azure: &azure
         connection: !Connection { type: azure, name: my-azure-account }
   - name: filter-vms
-    image: projectnebula/core:latest-python
+    image: relaysh/core:latest-python
     spec:
       virtualMachines: !Output {from: list-azure-vms, name: virtualMachines}
     inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/azure-vm-reaper/filter-vms.py
@@ -33,7 +33,7 @@
     when:
     - !Fn.equals [!Parameter dryRun, 'false']
   - name: delete-azure-vms
-    image: projectnebula/azure-vms-delete-vms
+    image: relaysh/azure-virtual-machines-step-vm-delete
     dependsOn: approval
     when:
     - !Fn.equals [!Parameter dryRun, 'false']

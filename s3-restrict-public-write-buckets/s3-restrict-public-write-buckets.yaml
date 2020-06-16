@@ -18,17 +18,17 @@ parameters:
 
 steps:
 - name: list-buckets
-  image: projectnebula/s3-list-buckets
+  image: relaysh/aws-s3-step-bucket-list
   spec:
     aws: &aws
       connection: !Connection { type: aws, name: my-aws-account }
 - name: get-bucket-acls
-  image: projectnebula/s3-get-bucket-acls
+  image: relaysh/aws-s3-step-bucket-get-acls
   spec:
     aws: *aws
     buckets: !Output {from: list-buckets, name: buckets}
 - name: filter-buckets
-  image: projectnebula/core:latest-python
+  image: relaysh/core:latest-python
   spec:
     bucketACLs: !Output {from: get-bucket-acls, name: bucketACLs}
   inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/s3-restrict-public-write-buckets/filter-buckets.py
@@ -39,7 +39,7 @@ steps:
   when:
     - !Fn.equals [!Parameter dryRun, 'false']
 - name: modify-acls
-  image: projectnebula/s3-put-bucket-acls
+  image: relaysh/aws-s3-step-bucket-put-acls
   dependsOn: approval
   when:
    - !Fn.equals [!Parameter dryRun, 'false']

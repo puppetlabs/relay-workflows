@@ -17,12 +17,12 @@
       default: 'true'
   steps:
   - name: list-azure-load-balancers
-    image: projectnebula/azure-network-list-load-balancers
+    image: relaysh/azure-network-step-load-balancer-list
     spec:
       azure: &azure
         connection: !Connection { type: azure, name: my-azure-account }
   - name: filter-loadbalancers
-    image: projectnebula/core:latest-python
+    image: relaysh/core:latest-python
     spec:
       loadBalancers: !Output {from: list-azure-load-balancers, name: loadBalancers}
     inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/azure-delete-empty-loadbalancers/filter-loadbalancers.py
@@ -33,7 +33,7 @@
     when:
     - !Fn.equals [!Parameter dryRun, 'false']
   - name: delete-azure-lbs
-    image: projectnebula/azure-network-delete-load-balancers
+    image: relaysh/azure-network-step-load-balancer-delete
     dependsOn: approval
     when:
     - !Fn.equals [!Parameter dryRun, 'false']

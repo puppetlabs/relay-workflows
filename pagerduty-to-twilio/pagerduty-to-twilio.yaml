@@ -38,7 +38,7 @@ triggers:
 
 steps:
 - name: notify-via-twilio
-  image: projectnebula/twilio-send-sms
+  image: relaysh/twilio-step-send-sms
   spec:
     twilio: &twilio
       accountSID: !Secret twilioAccountSID

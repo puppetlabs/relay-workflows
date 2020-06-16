@@ -22,13 +22,13 @@ parameters:
 
 steps:
 - name: describe-instances
-  image: projectnebula/ec2-describe-instances
+  image: relaysh/aws-ec2-step-instances-describe
   spec:
     aws: &aws
       connection: !Connection { type: aws, name: my-aws-account }
       region: !Parameter region
 - name: filter-instances
-  image: projectnebula/core:latest-python
+  image: relaysh/core:latest-python
   spec:
     instances: !Output {from: describe-instances, name: instances}
   inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/ec2-stop-untagged-instances/filter-instances.py
@@ -40,7 +40,7 @@ steps:
     - !Fn.equals [!Parameter dryRun, 'false']
 - name: stop-instances
   dependsOn: approval
-  image: projectnebula/ec2-stop-instances
+  image: relaysh/	aws-ec2-step-instances-stop
   when: 
     - !Fn.equals [!Parameter dryRun, 'false']
   spec:

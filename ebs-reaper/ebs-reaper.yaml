@@ -21,13 +21,13 @@
       default: 'true'
   steps:
   - name: describe-volumes
-    image: projectnebula/ebs-describe-volumes
+    image: relaysh/aws-ebs-step-volumes-describe
     spec:
       aws: &aws
         connection: !Connection { type: aws, name: my-aws-account }
         region: !Parameter region
   - name: filter-volumes
-    image: projectnebula/core:latest-python
+    image: relaysh/core:latest-python
     spec:
       volumes: !Output {from: describe-volumes, name: volumes}
     inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/ebs-reaper/filter-volumes.py
@@ -38,7 +38,7 @@
     - !Fn.equals [!Parameter dryRun, 'false']
     dependsOn: filter-volumes
   - name: terminate-volumes
-    image: projectnebula/ebs-delete-volumes
+    image: relaysh/aws-ebs-step-volumes-delete
     dependsOn: approval
     when: 
       - !Fn.equals [!Parameter dryRun, 'false']

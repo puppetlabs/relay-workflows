@@ -39,7 +39,7 @@ steps:
 #   description: Wait for approval to run terraform command
 #   type: approval
 - name: terraform-run
-  image: projectnebula/terraform
+  image: relaysh/terraform-step-run-command
   # dependsOn: [approval]
   spec:
     vars: !Fn.jsonUnmarshal [!Secret terraformVarsJSON]

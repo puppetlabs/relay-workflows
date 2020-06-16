@@ -7,7 +7,7 @@ triggers:
 - name: dockerhub-image-pushed
   source:
     type: webhook
-    image: relaysh/dockerhub-trigger-pushed:latest
+    image: relaysh/dockerhub-trigger-image-pushed
   binding:
     parameters:
       tag: !Data tag

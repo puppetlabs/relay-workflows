@@ -17,12 +17,12 @@
       default: 'true'
   steps:
   - name: list-azure-nics
-    image: projectnebula/azure-network-list-nics
+    image: relaysh/azure-network-step-nic-list
     spec:
       azure: &azure
         connection: !Connection { type: azure, name: my-azure-account }
   - name: filter-nics
-    image: projectnebula/core:latest-python
+    image: relaysh/core:latest-python
     spec:
       networkInterfaces: !Output {from: list-azure-nics, name: networkInterfaces}
     inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/azure-delete-unused-nics/filter-nics.py
@@ -33,7 +33,7 @@
     when:
     - !Fn.equals [!Parameter dryRun, 'false']
   - name: delete-azure-nics
-    image: projectnebula/azure-network-delete-nics
+    image: relaysh/azure-network-step-nic-delete
     dependsOn: approval
     when:
     - !Fn.equals [!Parameter dryRun, 'false']

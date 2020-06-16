@@ -22,25 +22,25 @@ parameters:
     
 steps:
 - name: describe-load-balancers
-  image: projectnebula/elbv2-describe-load-balancers
+  image: relaysh/aws-elbv2-step-load-balancers-describe
   spec:
     aws: &aws
       connection: !Connection { type: aws, name: my-aws-account }
       region: !Parameter region
 
 - name: describe-target-groups
-  image: projectnebula/elbv2-describe-target-groups
+  image: relaysh/aws-elbv2-step-target-groups-describe
   spec:
     aws: *aws
 
 - name: describe-targets 
-  image: projectnebula/elbv2-describe-targets
+  image: relaysh/aws-elbv2-step-targets-describe
   spec:
     aws: *aws
     targetgroups: !Output {from: describe-target-groups, name: targetgroups}
 
 - name: filter-empty-load-balancers
-  image: projectnebula/core:latest-python
+  image: relaysh/core:latest-python
   spec:
     loadbalancers: !Output {from: describe-load-balancers, name: loadbalancers}
     targetgroups: !Output {from: describe-target-groups, name: targetgroups}
@@ -55,7 +55,7 @@ steps:
     - !Fn.equals [!Parameter dryRun, 'false']
 
 - name: delete-load-balancers
-  image: projectnebula/elbv2-delete-load-balancers
+  image: relaysh/aws-elbv2-step-load-balancers-delete
   dependsOn: approval 
   when: 
     - !Fn.equals [!Parameter dryRun, 'false']

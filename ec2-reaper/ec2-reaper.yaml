@@ -30,13 +30,13 @@ parameters:
 
 steps:
 - name: describe-instances
-  image: projectnebula/ec2-describe-instances
+  image: relaysh/aws-ec2-step-instances-describe
   spec:
     aws: &aws
       connection: !Connection { type: aws, name: my-aws-account }
       region: !Parameter region
 - name: filter-instances
-  image: projectnebula/core:latest-python
+  image: relaysh/core:latest-python
   spec:
     terminationDateTag: !Parameter terminationDateTag
     lifetimeTag: !Parameter lifetimeTag
@@ -50,7 +50,7 @@ steps:
     - !Fn.equals [!Parameter dryRun, 'false']
 - name: terminate-instances
   dependsOn: termination-approval
-  image: projectnebula/ec2-terminate-instances
+  image: relaysh/	aws-ec2-step-instances-terminate
   when: 
     - !Fn.equals [!Parameter dryRun, 'false']
   spec:

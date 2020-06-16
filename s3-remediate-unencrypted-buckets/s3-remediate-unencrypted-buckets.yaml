@@ -18,17 +18,17 @@ parameters:
 
 steps:
 - name: list-buckets
-  image: projectnebula/s3-list-buckets
+  image: relaysh/aws-s3-step-bucket-list
   spec:
     aws: &aws
       connection: !Connection { type: aws, name: my-aws-account }
 - name: get-encryption-settings
-  image: projectnebula/s3-get-bucket-encryption
+  image: relaysh/aws-s3-step-bucket-get-encryption
   spec:
     aws: *aws
     buckets: !Output {from: list-buckets, name: buckets}
 - name: filter-buckets
-  image: projectnebula/core:latest-python
+  image: relaysh/core:latest-python
   spec:
     encryptionConfigurations: !Output {from: get-encryption-settings, name: encryptionConfigurations}
   inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/s3-remediate-unencrypted-buckets/filter-buckets.py
@@ -39,7 +39,7 @@ steps:
   when:
     - !Fn.equals [!Parameter dryRun, 'false']
 - name: encrypt-buckets
-  image: projectnebula/s3-put-bucket-encryption
+  image: relaysh/aws-s3-step-bucket-put-encryption
   dependsOn: approval
   when:
    - !Fn.equals [!Parameter dryRun, 'false']

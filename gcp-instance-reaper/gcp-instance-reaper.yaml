@@ -30,13 +30,13 @@ parameters:
 
 steps:
 - name: list-instances
-  image: projectnebula/gcp-list-instances
+  image: relaysh/gcp-step-instance-list
   spec:
     google: &google
       service_account_info: !Connection { type: gcp, name: my-gcp-account }
       zone: !Parameter zone
 - name: filter-instances
-  image: projectnebula/core:latest-python
+  image: relaysh/core:latest-python
   spec:
     terminationDateLabel: !Parameter terminationDateLabel
     lifetimeLabel: !Parameter lifetimeLabel
@@ -50,7 +50,7 @@ steps:
     - !Fn.equals [!Parameter dryRun, 'false']
 - name: delete-instances
   dependsOn: delete-approval
-  image: projectnebula/gcp-delete-instances
+  image: relaysh/gcp-step-instance-delete	
   when: 
     - !Fn.equals [!Parameter dryRun, 'false']
   spec:

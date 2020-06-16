@@ -27,7 +27,7 @@ triggers:
 
 steps:
 - name: create-jira-issue
-  image: relaysh/jira-server-step-issue-create
+  image: relaysh/jira-step-issue-create
   spec:
     connection:
       url: !Secret jiraURL

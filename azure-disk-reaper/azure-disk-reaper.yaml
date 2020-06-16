@@ -17,12 +17,12 @@
       default: 'true'
   steps:
   - name: list-azure-disks
-    image: projectnebula/azure-disks-list-disks
+    image: relaysh/azure-disks-step-disk-list
     spec:
       azure: &azure
         connection: !Connection { type: azure, name: my-azure-account }
   - name: filter-disks
-    image: projectnebula/core:latest-python
+    image: relaysh/core:latest-python
     spec:
       disks: !Output {from: list-azure-disks, name: disks}
     inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/azure-disk-reaper/filter-disks.py
@@ -33,7 +33,7 @@
     when:
     - !Fn.equals [!Parameter dryRun, 'false']
   - name: delete-disks
-    image: projectnebula/azure-disks-delete-disks
+    image: relaysh/azure-disks-step-disk-delete
     dependsOn: approval
     when:
     - !Fn.equals [!Parameter dryRun, 'false']

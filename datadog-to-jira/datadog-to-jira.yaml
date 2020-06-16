@@ -27,7 +27,7 @@ triggers:
 
 steps:
 - name: jira-issue-create
-  image: relaysh/jira-server-step-issue-create
+  image: relaysh/jira-step-issue-create
   when: !Fn.equals [!Parameter eventType, query_alert_monitor]
   spec:
     connection:

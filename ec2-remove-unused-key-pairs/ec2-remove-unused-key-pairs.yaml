@@ -22,19 +22,19 @@ parameters:
 
 steps:
 - name: describe-instances
-  image: projectnebula/ec2-describe-instances
+  image: relaysh/aws-ec2-step-instances-describe
   spec:
     aws: &aws
       connection: !Connection { type: aws, name: my-aws-account }
       region: !Parameter region
 
 - name: describe-key-pairs
-  image: projectnebula/ec2-describe-key-pairs
+  image: relaysh/aws-ec2-step-key-pairs-describe
   spec:
     aws: *aws
 
 - name: filter-key-pairs 
-  image: projectnebula/core:latest-python
+  image: relaysh/core:latest-python
   spec:
     instances: !Output {from: describe-instances, name: instances}
     keyPairs: !Output { from: describe-key-pairs, name: keyPairs}
@@ -49,7 +49,7 @@ steps:
 
 - name: delete-key-pairs 
   dependsOn: approval
-  image: projectnebula/ec2-delete-key-pairs 
+  image: relaysh/aws-ec2-step-key-pairs-delete
   when: 
     - !Fn.equals [!Parameter dryRun, 'false']
   spec:
