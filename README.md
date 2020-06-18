@@ -1,5 +1,5 @@
 # Relay Workflows  
-This repository contains workflows for [Relay](https://relay.sh). Feel free to use these workflows to get started.
+This repository contains workflows for [Relay](https://relay.sh). Feel free to use these workflows to get started. If you make fixes or improvements to any of these, [send us a pull request](https://github.com/puppetlabs/relay/CONTRIBUTING.md)! To file issues or enhancement requests for these workflows, use the [issue tracker on the main Relay repo](https://github.com/puppetlabs/relay/issues).
 
 | Category | Workflow      | Integrations  | Description  | Try it! |
 | ------------- | ------------- | ------------- | ------------ | -- |
