@@ -1,0 +1,52 @@
+apiVersion: v1
+description: Assume IAM role and list instances, images, key pairs, and volumes
+
+# Uncomment out this trigger to run this workflow hourly.
+# triggers:
+# - name: schedule
+#   source:
+#     type: schedule
+#     schedule: '0 * * * *'
+#   binding:
+#     parameters:
+#       region: us-east-1
+#       roleARN: "" # Insert your role ARN here
+
+parameters:
+  region:
+    description: The AWS region to run in
+    default: us-east-1
+  roleARN:
+    description: ARN of the IAM role to assume 
+    default: ""
+
+steps:
+- name: assume-role
+  image: relaysh/sts-assume-role
+  spec:
+    aws:
+      connection: !Connection { type: aws, name: my-aws-account }
+      region: !Parameter region
+    roleARN: arn:aws:iam::180094860577:role/EC2
+    roleSessionName: my-session
+- name: describe-instances
+  image: relaysh/aws-ec2-step-instances-describe
+  spec:
+    aws: &assumerole
+      connection: !Output {from: assume-role, name: connection}
+      region: !Parameter region
+- name: describe-images
+  image: relaysh/aws-ec2-step-images-describe
+  spec:
+    aws: *assumerole
+- name: describe-key-pairs
+  image: relaysh/aws-ec2-step-key-pairs-describe
+  spec:
+    aws: *assumerole
+- name: describe-volumes
+  image: relaysh/aws-ebs-step-volumes-describe
+  spec:
+    aws: *assumerole
+    
+
+
