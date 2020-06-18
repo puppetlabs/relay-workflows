@@ -5,7 +5,7 @@ import re
 from nebula_sdk import Interface, Dynamic as D
 
 
-ni = Interface()
+relay = Interface()
 
 # The `MINUTES_TO_WAIT` global variable is the number of minutes to wait for
 # a termination_date label to appear for the GCP instance.
@@ -15,8 +15,8 @@ MINUTES_TO_WAIT = 4
 INDEFINITE = 'indefinite'
 
 # Tag names (user-configurable)
-TERMINATION_DATE_LABEL = ni.get(D.terminationDateTag)
-LIFETIME_LABEL = ni.get(D.lifetimeTag)
+TERMINATION_DATE_LABEL = relay.get(D.terminationDateLabel)
+LIFETIME_LABEL = relay.get(D.lifetimeLabel)
 
 
 def get_label(gcp_instance, label_name):
@@ -130,7 +130,7 @@ def get_termination_date(gcp_instance, wait_time=MINUTES_TO_WAIT):
 if __name__ == '__main__':
     to_terminate = []
 
-    instances = filter(lambda i: i['status'] == 'RUNNING', ni.get(D.instances))
+    instances = filter(lambda i: i['status'] == 'RUNNING', relay.get(D.instances))
     for instance in instances:
         try:
             (termination_date, reason) = get_termination_date(instance)
@@ -145,4 +145,4 @@ if __name__ == '__main__':
         except Exception as e:
             print('GCP instance {0} not considered for termination because of a processing error: {1}'.format(instance['name'], e))
 
-    ni.outputs.set('instances', to_terminate)
+    relay.outputs.set('instances', to_terminate)
