@@ -1,0 +1,48 @@
+apiVersion: v1
+description: Automatically clean up GCP disks that are unattached
+
+# Uncomment out this trigger to run this workflow hourly.
+# triggers:
+# - name: schedule
+#   source:
+#     type: schedule
+#     schedule: '0 * * * *'
+#   binding:
+#     parameters:
+#       zone: us-central1-a
+#       dryRun: true
+
+parameters:
+  zone:
+    description: The GCP zone to run in
+    default: us-central1-a
+  dryRun:
+    description: True if this workflow should only print the resources it would delete
+    default: 'true'
+
+steps:
+- name: list-disks
+  image: relaysh/gcp-step-disk-list
+  spec:
+    google: &google
+      service_account_info: !Connection { type: gcp, name: my-gcp-account }
+      zone: !Parameter zone
+- name: filter-disks
+  image: relaysh/core:latest-python
+  spec:
+    disks: !Output {from: list-disks, name: disks}
+  inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/gcp-disk-reaper/filter-disks.py
+- name: delete-approval
+  description: Wait for approval to delete instances 
+  type: approval
+  dependsOn: filter-disks
+  when: 
+    - !Fn.equals [!Parameter dryRun, 'false']
+- name: delete-disks
+  dependsOn: delete-approval
+  image: relaysh/gcp-step-disk-delete	
+  when: 
+    - !Fn.equals [!Parameter dryRun, 'false']
+  spec:
+    google: *google
+    disks: !Output {from: filter-disks, name: disks}
