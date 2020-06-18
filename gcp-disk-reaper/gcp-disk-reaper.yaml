@@ -33,7 +33,7 @@ steps:
     disks: !Output {from: list-disks, name: disks}
   inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/gcp-disk-reaper/filter-disks.py
 - name: delete-approval
-  description: Wait for approval to delete instances 
+  description: Wait for approval to delete disks 
   type: approval
   dependsOn: filter-disks
   when: 
