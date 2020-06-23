@@ -1,5 +1,5 @@
-This workflow responds to a PagerDuty incident by sending a message to a Slack 
-channel. The urgency of the incident determines which Slack channel the message 
+This workflow responds to a PagerDuty incident by sending a message to a Slack
+channel. The urgency of the incident determines which Slack channel the message
 goes to.
 
 ## Prerequisites
@@ -20,7 +20,7 @@ in this workflow to run in your environment. The default configuration assumes:
 ## Test the workflow
 
 You can test the workflow with dummy data by clicking the **Run** button. Ensure
-the message you expect shows up in your Slack workspace. We recommend always 
+the message you expect shows up in your Slack workspace. We recommend always
 testing workflows manually before configuring automated triggers.
 
 ## Set up the trigger
@@ -45,5 +45,3 @@ incident is triggered. For each of those services:
 
 Whenever an incident is triggered for the first time, this workflow will run.
 You can reuse the same webhook URL for many services.  
-
-![Gif of setting up Pagerduty webhook to trigger Relay](../images/setup-pagerduty-webhook.gif)

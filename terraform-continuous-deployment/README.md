@@ -32,8 +32,6 @@ Before you run this workflow, you will need the following:
    - Uncheck the **Pushes** box  
    - Click **Add webhook** at the bottom of the page  
 
-![Gif of creating webhook in Github for Terraform repository](../images/github-to-terraform-webhook.gif)
-
 Relay will now receive webhook events for Pull Request merges and use them to
 run your workflow.  
 

@@ -38,8 +38,6 @@ Configure the Datadog monitor:
 2. Under **Say what's happening**, add the above webhook with `@webhook-{name of webhook}` (e.g. `@webhook-relay`)  
 3. Click **Save**  
 
-![Gif of setting up Datadog Alert to trigger Relay](../images/setup-datadog-webhook.gif)
-
 ## Testing Alerts  
 
 To test the Datadog alert:   
@@ -47,4 +45,3 @@ To test the Datadog alert:
 2. Scroll to the bottom of the page and click **Test Notifications**    
 3. Select **Alert** (default)  
 4. Click **Run Test**   
-

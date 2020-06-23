@@ -9,15 +9,15 @@ Before you run this workflow, you will need the following:
 
 ## Configure the workflow
 
-- Update the default parameter for `jiraProjectKey` for the Jira project where you 
-  want tickets to be created. 
+- Update the default parameter for `jiraProjectKey` for the Jira project where you
+  want tickets to be created.
     - Currently, tickets will be created in the 'OPS' project by default.
 
 - Define the following secrets to connect to your Jira instance:
-    - `jiraURL`: The URL to the root of your Jira instance. For Jira Cloud, this is 
+    - `jiraURL`: The URL to the root of your Jira instance. For Jira Cloud, this is
       `https://your-domain.atlassian.net`.
     - `jiraUsername`: The username to use when authenticating to Jira.
-    - `jiraToken`: The [API token](https://confluence.atlassian.com/x/Vo71Nw) (for 
+    - `jiraToken`: The [API token](https://confluence.atlassian.com/x/Vo71Nw) (for
       Jira Cloud) or password to use when authenticating to Jira.
 
 ## Test the workflow
@@ -49,5 +49,3 @@ incident is triggered. For each of those services:
 
 Whenever an incident is triggered for the first time, this workflow will run.  
 You can reuse the same webhook URL for many services.  
-
-![Gif of setting up Pagerduty webhook to trigger Relay](../images/setup-pagerduty-webhook.gif)
