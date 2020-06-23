@@ -1,5 +1,5 @@
 apiVersion: v1
-description: Automatically run a Terraform plan when a GitHub PR is merged
+description: Automatically apply a Terraform configuration when a GitHub PR is merged
 
 triggers:
 - name: github-pr-merge
@@ -8,26 +8,19 @@ triggers:
     image: relaysh/github-trigger-pull-request-merged:latest
   binding:
     parameters:
-      terraformPlanRepository: !Data repositorySSHURL
+      repository: !Data repositorySSHURL
+      branch: !Data branch
 
 parameters:
-  repository:
-    description: The name of the repository that had a PR merged
-  branch:
-    description: The branch that the PR was pulled into
-    default: master
-  terraformWorkspace:
+  workspace:
     description: The Terraform workspace to use
     default: default
-  terraformPlanDir:
-    description: The directory of the Terraform plan
+  moduleDir:
+    description: The directory of the Terraform module
     default: .
-  terraformCommand:
-    description: The Terraform command to run
-    default: apply
-  terraformPlanRepository:
-    description: The repository that holds the terraform plan
-  terraformPlanRepositoryBranch:
+  repository:
+    description: The repository that holds the Terraform module
+  branch:
     description: The repository branch to use when cloning the repository
     default: master
 
@@ -39,16 +32,15 @@ steps:
 #   description: Wait for approval to run terraform command
 #   type: approval
 - name: terraform-run
-  image: relaysh/terraform-step-run-command
+  image: relaysh/terraform-step-apply
   # dependsOn: [approval]
   spec:
     vars: !Fn.jsonUnmarshal [!Secret terraformVarsJSON]
-    workspace: !Parameter terraformWorkspace
-    directory: !Parameter terraformPlanDir
-    command: !Parameter terraformCommand
+    workspace: !Parameter workspace
+    directory: !Parameter moduleDir
     aws: !Connection { type: aws, name: terraform-state-provider }
     git: !Fn.merge
       connection: !Connection { type: ssh, name: terraform-repository-key }
       name: terraform-plan
-      repository: !Parameter terraformPlanRepository
-      branch: !Parameter terraformPlanRepositoryBranch
+      repository: !Parameter repository
+      branch: !Parameter branch

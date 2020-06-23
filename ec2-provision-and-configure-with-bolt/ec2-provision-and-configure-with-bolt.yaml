@@ -31,7 +31,7 @@ parameters:
 
 steps:
 - name: provision-ec2-with-terraform
-  image: relaysh/terraform-step-run-command
+  image: relaysh/terraform-step-apply
   spec:
     backendConfig:
       bucket: !Parameter terraformStateBucket
