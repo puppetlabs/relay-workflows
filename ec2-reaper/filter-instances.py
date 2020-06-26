@@ -147,8 +147,15 @@ def get_termination_date(ec2_instance, wait_time=MINUTES_TO_WAIT):
 
 if __name__ == '__main__':
     to_terminate = []
+    
+    raw_instances = None
+    try:
+        raw_instances = ni.get(D.instances)
+    except:
+        print('No instances found. Exiting.')
+        exit(1)
 
-    instances = filter(lambda i: i['State']['Name'] == 'running', ni.get(D.instances))
+    instances = filter(lambda i: i['State']['Name'] == 'running', raw_instances)
     for instance in instances:
         try:
             (termination_date, reason) = get_termination_date(instance)
