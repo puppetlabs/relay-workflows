@@ -1,0 +1,52 @@
+#   This workflow can be run from a github commit trigger
+#   set up on a workflow repo, to update workflows in the
+#   service whenever a PR is merged.
+
+parameters:
+  pr_target_branch:
+    description: "branch target for the merged PR (default: main)"
+    default: main
+  pr_url:
+    description: "the URL where relay should retrieve the updated workflow"
+  repo_url:
+    description: "http clone url for the repository"
+  repo_path:
+    description: "the username/reponame path to the repo"
+
+triggers:
+  - name: github-commit-hook
+    source:
+      type: webhook
+      image: relaysh/github-trigger-pull-request-merged
+    binding:
+      parameters:
+        pr_target_branch: !Data branch
+        pr_url: !Data url
+        repo_url: !Data repositoryURL
+        repo_path: !Data repository
+
+steps:
+  - name: update-workflow
+    image: relaysh/core
+    when:
+    - !Fn.equals [!Parameter pr_target_branch, "main"]
+    spec:
+      pr_url: !Parameter pr_url
+      repo_url: !Parameter repo_url
+      repo_path: !Parameter repo_path
+      relay:
+        username: !Secret relayuser
+        password: !Secret relaypass
+    input:
+      - |
+        clonedir=$(basename `ni get -p {.repo_path}`)
+        pr_url=$(ni get -p {.pr_url})
+        git clone $(ni get -p {.repo_url}) $clonedir
+        cd $clonedir
+        sha=$(curl -s $pr_url | jq -r '.head.sha')
+        filename=$(git diff-tree -r --name-only --no-commit-id $sha | grep yaml | head -1)
+        if [[ -n $filename ]]; then
+          workflow=$(basename $filename .yaml)
+          echo $(ni get -p {.relay.password}) | relay auth login $(ni get -p {.relay.username}) -p
+          relay workflow replace $workflow -f $filename
+        fi
