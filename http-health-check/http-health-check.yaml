@@ -1,0 +1,39 @@
+#   This workflow performs a general http health status
+#   and then restarts an EC2 instance in response if the 
+#   http status is not 200.
+
+parameters:
+  instanceID:
+    description: The EC2 instance ID to reboot when the health check fails.
+  url:
+    description: The URL to make a health check against.
+    default: https://relay.sh
+
+# Uncomment this trigger to run on a schedule
+# triggers:
+# - name: schedule
+#   source:
+#     type: schedule
+#     schedule: '0 * * * *'
+#   binding:
+#     parameters:
+#       instanceID: '' # insert your EC2 instance id here
+#       url: '' # insert the URL to make a health check against
+
+steps:
+- name: get-http-status
+  image: relaysh/core:latest-python
+  inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/http-health-check/checkHealth.py
+  spec:
+    url: !Parameter url
+    
+- name: ec2-reboot-instances
+  image: relaysh/aws-ec2-step-instances-reboot
+  when:
+    - !Fn.notEquals [!Output {from: get-http-status, name: status}, '200']
+  spec:
+    aws:
+      connection: !Connection { type: aws, name: my-aws-account }
+      region: us-west-2
+    instanceIDs:
+    - !Parameter instanceID
