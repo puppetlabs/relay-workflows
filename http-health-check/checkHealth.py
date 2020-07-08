@@ -26,5 +26,6 @@ if __name__ == '__main__':
   except:
     print('No URL was configured. Exiting.')
     exit(1)
-
-  relay.outputs.set('status', get_http_status(url))
+  status = get_http_status(url)
+  print("Status for service {0} is {1}".format(url, status))
+  relay.outputs.set('status', status)
