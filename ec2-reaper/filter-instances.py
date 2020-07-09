@@ -16,10 +16,10 @@
 import datetime
 import re
 
-from nebula_sdk import Interface, Dynamic as D
+from relay_sdk import Interface, Dynamic as D
 
 
-ni = Interface()
+relay = Interface()
 
 # The `MINUTES_TO_WAIT` global variable is the number of minutes to wait for
 # a termination_date tag to appear for the EC2 instance. Please note that the
@@ -30,8 +30,8 @@ MINUTES_TO_WAIT = 4
 INDEFINITE = 'indefinite'
 
 # Tag names (user-configurable)
-TERMINATION_DATE_TAG = ni.get(D.terminationDateTag)
-LIFETIME_TAG = ni.get(D.lifetimeTag)
+TERMINATION_DATE_TAG = relay.get(D.terminationDateTag)
+LIFETIME_TAG = relay.get(D.lifetimeTag)
 
 
 def get_tag(ec2_instance, tag_name):
@@ -150,7 +150,7 @@ if __name__ == '__main__':
     
     raw_instances = None
     try:
-        raw_instances = ni.get(D.instances)
+        raw_instances = relay.get(D.instances)
     except:
         print('No instances found. Exiting.')
         exit(1)
@@ -170,4 +170,4 @@ if __name__ == '__main__':
         except Exception as e:
             print('EC2 instance {0} not considered for termination because of a processing error: {1}'.format(instance['InstanceId'], e))
 
-    ni.outputs.set('instanceIDs', to_terminate)
+    relay.outputs.set('instanceIDs', to_terminate)
