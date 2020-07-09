@@ -10,7 +10,7 @@
 # Outputs:
 #   - instanceIDs - list of instance IDs to stop in the next step
 
-from nebula_sdk import Interface, Dynamic as D
+from relay_sdk import Interface, Dynamic as D
 
 relay = Interface()
 

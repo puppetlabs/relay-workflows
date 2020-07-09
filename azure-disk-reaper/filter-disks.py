@@ -12,7 +12,7 @@
 
 import logging
 
-from nebula_sdk import Interface, Dynamic as D
+from relay_sdk import Interface, Dynamic as D
 
 relay = Interface()
 

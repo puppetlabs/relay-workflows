@@ -11,7 +11,7 @@
 # Outputs:
 #   - keyPairNames - list of key pair names
 
-from nebula_sdk import Interface, Dynamic as D
+from relay_sdk import Interface, Dynamic as D
 
 relay = Interface()
 

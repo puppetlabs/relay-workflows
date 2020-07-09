@@ -9,7 +9,7 @@
 # Outputs:
 #   - resourceIDs - list of Azure Virtual Machine resource IDs to be terminated in the subsequent step
 
-from nebula_sdk import Interface, Dynamic as D
+from relay_sdk import Interface, Dynamic as D
 
 relay = Interface()
 

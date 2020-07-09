@@ -10,7 +10,7 @@
 # Outputs:
 #   - loadbalancerARNs - list of empty ELBv2 load balancer ARNs to be deleted
 
-from nebula_sdk import Interface, Dynamic as D
+from relay_sdk import Interface, Dynamic as D
 
 relay = Interface()
 

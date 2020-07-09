@@ -2,7 +2,7 @@
 import datetime
 import re
 
-from nebula_sdk import Interface, Dynamic as D
+from relay_sdk import Interface, Dynamic as D
 
 
 relay = Interface()
