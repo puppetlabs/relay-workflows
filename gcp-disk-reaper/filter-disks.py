@@ -5,7 +5,7 @@ relay = Interface()
 
 if __name__ == '__main__':
     to_terminate = []
-    print('Disk to be terminated')
+    print('Disk to be terminated:')
     disks = relay.get(D.disks)
     for disk in disks:
         if "users" not in disk.keys():
