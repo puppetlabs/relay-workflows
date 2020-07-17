@@ -1,0 +1,77 @@
+parameters:
+  state:
+    default: ""
+  problemid:
+    default: ""
+  pid:
+    default: ""
+  problemtitle:
+    default: ""
+  problemurl:
+    default: ""
+  problemseverity:
+    default: ""
+  problemimpact:
+    default: ""
+  problemdetailstext:
+    default: ""
+  tags:
+    default: ""
+
+triggers:
+- name: dynatrace-problem-event
+  source:
+    type: webhook
+    image: relaysh/dynatrace-trigger-event-fired:latest
+  binding:
+    parameters:
+      state: !Data State
+      problemid: !Data ProblemId
+      pid: !Data PID
+      problemtitle: !Data ProblemTitle
+      problemurl: !Data ProblemUrl 
+      problemseverity: !Data ProblemSeverity
+      problemimpact: !Data ProblemImpact
+      problemdetailstext: !Data ProblemDetailsText
+      tags: !Data Tags
+steps:
+- name: approval-post-problem-comment
+  description: Do you want to post a comment on the Dynatrace problem?
+  type: approval
+- name: post-problem-comment
+  image: relaysh/core
+  input:
+  - echo "$(ni get -p {.dtapiendpoint})/api/v1/problem/details/$(ni get -p {.pid})/comments"
+  - echo "Authorization Api-Token $(ni get -p {.dtapitoken})"
+  - | 
+    set -x
+    curl -X POST "$(ni get -p {.dtapiendpoint})/api/v1/problem/details/$(ni get -p {.pid})/comments" \
+     -H "accept: application/json; charset=utf-8" \
+     -H "Authorization: Api-Token $(ni get -p {.dtapitoken})" \
+     -H "Content-Type: application/json; charset=utf-8" \
+     -d "{\"comment\":\"This is a comment from Relay. We are working on this!!\",\"user\":\"Relay Workflow\",\"context\":\"Relay\"}"  
+  dependsOn:
+  - approval-post-problem-comment  
+  spec:
+    problemdetailstext: !Parameter problemdetailstext
+    problemtitle: !Parameter problemtitle
+    state: !Parameter state
+    problemid: !Parameter problemid
+    pid: !Parameter pid
+    dtapitoken: !Secret dtapitoken
+    dtapiendpoint: !Secret dtapiendpoint  
+- name: log-problem-details
+  image: relaysh/core
+  spec:
+    problemdetailstext: !Parameter problemdetailstext
+    problemtitle: !Parameter problemtitle
+    state: !Parameter state
+    problemid: !Parameter problemid
+    pid: !Parameter pid
+  input:
+  - echo "Here the details of the Dynatrace Problem"
+  - echo "Title $(ni get -p {.problemtitle})"
+  - echo "$(ni get -p {.problemdetailstext})"
+  - echo "State $(ni get -p {.state})"
+  - echo "ProblemId $(ni get -p {.problemid})"
+  - echo "PID $(ni get -p {.pid})"
