@@ -1,7 +1,17 @@
+# The schema version. Required.
 apiVersion: v1
 
-description: >
+# Single-paragraph explanation of what this workflow does in more detail.
+# Optional. Markdown.
+description: |
   Send a message to Slack whenever a PagerDuty incident first occurs.
+
+# URL to this workflow's documentation. Optional.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/pagerduty-to-slack
+
+# An array of descriptors for grouping workflows. Optional.
+keywords:
+  - Incident Response
 
 parameters:
   lowUrgencySlackChannel:
