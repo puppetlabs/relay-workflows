@@ -10,7 +10,7 @@ description: |
 homepage: https://github.com/puppetlabs/relay-workflows/tree/master/pagerduty-to-slack
 
 # An array of descriptors for grouping workflows. Optional.
-keywords:
+tags:
   - Incident Response
 
 parameters:
