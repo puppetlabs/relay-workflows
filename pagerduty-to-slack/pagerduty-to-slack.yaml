@@ -1,6 +1,7 @@
 apiVersion: v1
+summary: When a PagerDuty incident is triggered, send a message to Slack
 description: >
-  Send a message to Slack whenever a PagerDuty incident first occurs.
+  This workflow responds to a PagerDuty incident by sending a message to a Slack channel. The urgency of the incident determines which Slack channel the message goes to.
 homepage: https://github.com/puppetlabs/relay-workflows/tree/master/pagerduty-to-slack
 tags:
   - incident response
