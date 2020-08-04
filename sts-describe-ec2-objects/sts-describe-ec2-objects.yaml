@@ -1,5 +1,9 @@
 apiVersion: v1
-description: Assume IAM role and list instances, images, key pairs, and volumes
+summary: Assume IAM role and list instances, images, key pairs, and volumes
+description: This workflow uses AWS Security Token Service (STS) to assume a privileged IAM role which it uses to list instances, images, key pairs, and volumes.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/sts-describe-ec2-objects
+tags:
+  - operations
 
 # Uncomment out this trigger to run this workflow hourly.
 # triggers:
@@ -17,7 +21,7 @@ parameters:
     description: The AWS region to run in
     default: us-east-1
   roleARN:
-    description: ARN of the IAM role to assume 
+    description: ARN of the IAM role to assume
     default: ""
 
 steps:
@@ -47,6 +51,3 @@ steps:
   image: relaysh/aws-ebs-step-volumes-describe
   spec:
     aws: *assumerole
-    
-
-

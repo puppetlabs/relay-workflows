@@ -1,5 +1,9 @@
 apiVersion: v1
-description: Delete ELB v2 load balancers that have no targets
+summary: Delete empty ELBv2 load balancers
+description: This workflow finds empty ELBv2 load balancers by locating all load balancers that have empty target groups (i.e. no registered targets). It then terminates these load balancers.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/elbv2-delete-empty-loadbalancers
+tags:
+  - cost optimization
 
 # Uncomment out this trigger to run this workflow hourly.
 # triggers:
@@ -19,7 +23,7 @@ parameters:
   dryRun:
     description: True if this workflow should only print the resources it would delete
     default: 'true'
-    
+
 steps:
 - name: describe-load-balancers
   image: relaysh/aws-elbv2-step-load-balancers-describe
@@ -33,7 +37,7 @@ steps:
   spec:
     aws: *aws
 
-- name: describe-targets 
+- name: describe-targets
   image: relaysh/aws-elbv2-step-targets-describe
   spec:
     aws: *aws
@@ -46,9 +50,9 @@ steps:
     targetgroups: !Output {from: describe-target-groups, name: targetgroups}
     targets: !Output {from: describe-targets, name: targets}
   inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/elbv2-delete-empty-loadbalancers/filter-loadbalancers.py
-    
+
 - name: approval
-  description: Wait for manual approval to delete load balancers 
+  description: Wait for manual approval to delete load balancers
   type: approval
   dependsOn: filter-empty-load-balancers
   when:
@@ -56,8 +60,8 @@ steps:
 
 - name: delete-load-balancers
   image: relaysh/aws-elbv2-step-load-balancers-delete
-  dependsOn: approval 
-  when: 
+  dependsOn: approval
+  when:
     - !Fn.equals [!Parameter dryRun, 'false']
   spec:
     aws: *aws

@@ -1,5 +1,9 @@
   apiVersion: v1
-  description: Automatically clean up Azure disks that are unattached
+  summary: Delete unattached Azure Disks
+  description: This workflow looks at all of the Azure Disks in a given subscription and (optionally) resource group that are unattached and terminates them. Requires an Azure account with permissions to delete Disks.
+  homepage: https://github.com/puppetlabs/relay-workflows/tree/master/azure-disk-reaper
+  tags:
+    - cost optimization
 
 # Uncomment out this trigger to run this workflow hourly.
 # triggers:

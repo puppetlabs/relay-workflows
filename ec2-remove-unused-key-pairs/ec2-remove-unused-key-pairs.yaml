@@ -1,5 +1,9 @@
 apiVersion: v1
-description: Remove unused EC2 Key Pairs 
+summary: Remove unused EC2 key pairs
+description: This workflow finds all EC2 key pairs that are not used by an EC2 instance and removes them from the account.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/ec2-remove-unused-key-pairs
+tags:
+  - security
 
 # Uncomment out this trigger to run this workflow hourly.
 # triggers:
@@ -33,7 +37,7 @@ steps:
   spec:
     aws: *aws
 
-- name: filter-key-pairs 
+- name: filter-key-pairs
   image: relaysh/core:latest-python
   spec:
     instances: !Output {from: describe-instances, name: instances}
@@ -41,20 +45,17 @@ steps:
   inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/ec2-remove-unused-key-pairs/filter-key-pairs.py
 
 - name: approval
-  description: Wait for approval to delete key pairs 
+  description: Wait for approval to delete key pairs
   type: approval
   dependsOn: filter-key-pairs
-  when: 
+  when:
     - !Fn.equals [!Parameter dryRun, 'false']
 
-- name: delete-key-pairs 
+- name: delete-key-pairs
   dependsOn: approval
   image: relaysh/aws-ec2-step-key-pairs-delete
-  when: 
+  when:
     - !Fn.equals [!Parameter dryRun, 'false']
   spec:
     aws: *aws
     keyPairNames: !Output {from: filter-key-pairs, name: keyPairNames}
-
-
-

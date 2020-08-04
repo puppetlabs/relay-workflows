@@ -1,7 +1,9 @@
 apiVersion: v1
-
-description: >
-  Monitor AWS DynamoDB provisioned capacity
+summary: Monitor AWS DynamoDB provisioned capacity
+description: This workflow sends a notification to Slack when DynamoDB provisioned capacity exceeds defined limits.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/dynamodb-capacity-monitor
+tags:
+  - incident response
 
 parameters:
   slackChannel:

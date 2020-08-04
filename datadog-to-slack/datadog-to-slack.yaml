@@ -1,7 +1,9 @@
 apiVersion: v1
-
-description: >
-  Sends a Slack notification when a new Datadog event is received
+summary: When a Datadog alert is triggered, send a message to Slack
+description: This workflow responds to a Datadog alert by sending a message to a Slack channel.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/datadog-to-slack
+tags:
+  - incident response
 
 parameters:
   slackChannel:

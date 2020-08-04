@@ -1,5 +1,10 @@
 apiVersion: v1
-description: Automatically clean up GCP instances that do not have the correct labels
+summary: Delete GCP instances without valid `lifetime` tag
+description: >
+  This workflow looks at all of the GCP instances in a given account and zone and selects a subset of those to terminate. The termination criteria are:\n\n* Not labelled with a `termination_date` or `lifetime` after 4 mintutes \n* The `termination_date` or `lifetime` labels are present but cannot be parsed. \n* The `termination_date` or `lifetime` labels indicate that the instance has expired.\n\nAn instance may be configured to never terminate if its `lifetime` label has the special value `indefinite`. Other valid values for the `lifetime` label are of the form `<number><unit>` where `<number>` is any integer and `<unit>` is a time unit of `w`(weeks), `h`(hours), `d`(days) or `m`(months). So, as an example, if the `lifetime` label for an instance has a value of `43w` then it should be terminated after it's 43 weeks old.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/gcp-instance-reaper
+tags:
+  - cost optimization
 
 # Uncomment out this trigger to run this workflow hourly.
 # triggers:
@@ -43,15 +48,15 @@ steps:
     instances: !Output {from: list-instances, name: instances}
   inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/gcp-instance-reaper/filter-instances.py
 - name: delete-approval
-  description: Wait for approval to delete instances 
+  description: Wait for approval to delete instances
   type: approval
   dependsOn: filter-instances
-  when: 
+  when:
     - !Fn.equals [!Parameter dryRun, 'false']
 - name: delete-instances
   dependsOn: delete-approval
-  image: relaysh/gcp-step-instance-delete	
-  when: 
+  image: relaysh/gcp-step-instance-delete
+  when:
     - !Fn.equals [!Parameter dryRun, 'false']
   spec:
     google: *google

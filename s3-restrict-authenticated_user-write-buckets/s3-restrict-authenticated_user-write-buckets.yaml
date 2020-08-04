@@ -1,5 +1,9 @@
 apiVersion: v1
-description: Find all S3 buckets with WRITE permissions for all Authenticated Users
+summary: Restricts S3 buckets with WRITE permissions to all Authenticated Users
+description: This workflow looks at all of the S3 buckets in a given account and restricts those that provide 'WRITE' access to all Authenticated Users. Requires an AWS account with permissions to modify S3 buckets.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/s3-restrict-authenticated_user-write-buckets
+tags:
+  - security
 
 # Uncomment out this trigger to run this workflow hourly.
 # triggers:
@@ -46,5 +50,5 @@ steps:
   spec:
     aws: *aws
     buckets: !Output {from: filter-buckets, name: buckets}
-    acl: private 
+    acl: private
     confetti: true

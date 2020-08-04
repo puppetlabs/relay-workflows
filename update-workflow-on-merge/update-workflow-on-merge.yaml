@@ -1,6 +1,9 @@
-#   This workflow can be run from a github commit trigger
-#   set up on a workflow repo, to update workflows in the
-#   service whenever a PR is merged.
+apiVersion: v1
+summary: Update workflow on merge
+description: This workflow can be run from a GitHub commit trigger configured on a workflow repo to update workflows in the service whenever a PR is merged.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/update-workflow-on-merge
+tags:
+  - continuous delivery
 
 parameters:
   pr_target_branch:
