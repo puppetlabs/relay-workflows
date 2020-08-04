@@ -1,6 +1,9 @@
-#   This workflow performs a general http health status
-#   and then restarts an EC2 instance in response if the 
-#   http status is not 200.
+apiVersion: v1
+summary: Check http health status and restart EC2 instance if needed
+description: This workflow performs a general http health status and then restarts an EC2 instance in response if the http status is not 200.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/http-health-check
+tags:
+  - operations
 
 parameters:
   instanceID:
@@ -26,7 +29,7 @@ steps:
   inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/http-health-check/checkHealth.py
   spec:
     url: !Parameter url
-    
+
 - name: ec2-reboot-instances
   image: relaysh/aws-ec2-step-instances-reboot
   when:

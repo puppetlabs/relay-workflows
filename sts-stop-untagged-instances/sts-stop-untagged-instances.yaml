@@ -1,5 +1,9 @@
 apiVersion: v1
-description: Assume IAM role and stop EC2 instances that are untagged
+summary: Assume IAM role and stop untagged EC2 instances
+description: This workflow uses AWS Security Token Service (STS) to assume a privileged IAM role which it uses to then stop untagged EC2 instances.
+homepage: https://github.com/puppetlabs/relay-workflows/blob/master/sts-stop-untagged-instances
+tags:
+  - security
 
 # Uncomment out this trigger to run this workflow hourly.
 # triggers:
@@ -21,14 +25,14 @@ parameters:
     description: True if you don't want to perform actual WRITE operations
     default: 'true'
   roleARN:
-    description: ARN of the IAM role to assume 
+    description: ARN of the IAM role to assume
     default: ""
 
 steps:
 - name: assume-role
   image: relaysh/sts-assume-role
   spec:
-    aws: 
+    aws:
       connection: !Connection { type: aws, name: my-aws-account }
       region: !Parameter region
     roleARN: !Parameter roleARN
@@ -45,18 +49,16 @@ steps:
     instances: !Output {from: describe-instances, name: instances}
   inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/sts-stop-untagged-instances/filter-instances.py
 - name: approval
-  description: Wait for approval to stop instances 
+  description: Wait for approval to stop instances
   type: approval
   dependsOn: filter-instances
-  when: 
+  when:
     - !Fn.equals [!Parameter dryRun, 'false']
 - name: stop-instances
   dependsOn: approval
   image: relaysh/aws-ec2-step-instances-stop
-  when: 
+  when:
     - !Fn.equals [!Parameter dryRun, 'false']
   spec:
     aws: *assumerole
     instanceIDs: !Output {from: filter-instances, name: instanceIDs}
-
-

@@ -1,7 +1,9 @@
 apiVersion: v1
-description: >
-  Automatically run kubectl apply on a kubernetes cluster when
-  a new image tag is pushed to DockerHub.
+summary: Update Kubernetes deployment image tag on Docker Hub push
+description: This workflow responds when a new Docker Hub image is available by updating a Kubernetes deployment image.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/kubectl-apply-on-dockerhub-push
+tags:
+  - continuous delivery
 
 triggers:
 - name: dockerhub-image-pushed

@@ -1,5 +1,9 @@
   apiVersion: v1
-  description: Delete empty Azure Load Balancers
+  summary: Delete empty Azure Load Balancers
+  description: This workflow finds empty Azure load balancers by locating load balancers that have no backend configurations. It then terminates these load balancers.
+  homepage: https://github.com/puppetlabs/relay-workflows/tree/master/azure-delete-empty-loadbalancers
+  tags:
+    - cost optimization
 
   # Uncomment out this trigger to run this workflow hourly.
   # triggers:

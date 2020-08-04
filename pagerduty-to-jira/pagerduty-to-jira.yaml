@@ -1,7 +1,9 @@
 apiVersion: v1
-
-description: >
-  Create an issue in Jira when a new PagerDuty incident occurs
+summary: When a PagerDuty incident is triggered, create a Jira ticket
+description: This workflow responds to a PagerDuty incident by creating an issue in Jira.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/pagerduty-to-jira
+tags:
+  - incident response
 
 parameters:
   jiraProjectKey:

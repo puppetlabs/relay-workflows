@@ -1,7 +1,9 @@
 apiVersion: v1
-
-description: >
-  Send someone an SMS message whenever a PagerDuty incident first occurs.
+summary: Send a Twilio SMS when PagerDuty incident triggers
+description: This workflow uses Twilio to send an SMS notification when a new PagerDuty incident is triggered.
+homepage: https://github.com/puppetlabs/relay-workflows/blob/master/pagerduty-to-twilio
+tags:
+  - incident response
 
 parameters:
   phoneNumber:

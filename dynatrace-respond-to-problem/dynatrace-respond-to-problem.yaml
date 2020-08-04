@@ -1,3 +1,10 @@
+apiVersion: v1
+summary: Connect Dynatrace and Relay to respond to problem events
+description: This workflow configures a webhook trigger to receive problem notifications from Dynatrace, conditionally posts a comment back to the Dynatrace problem, and logs the problem details in Relay.
+homepage: https://github.com/relay-integrations/relay-dynatrace/tree/master/workflows/dynatrace-respond-to-problem
+tags:
+  - operations
+
 parameters:
   state:
     default: ""
@@ -29,7 +36,7 @@ triggers:
       problemid: !Data ProblemId
       pid: !Data PID
       problemtitle: !Data ProblemTitle
-      problemurl: !Data ProblemUrl 
+      problemurl: !Data ProblemUrl
       problemseverity: !Data ProblemSeverity
       problemimpact: !Data ProblemImpact
       problemdetailstext: !Data ProblemDetailsText
@@ -43,15 +50,15 @@ steps:
   input:
   - echo "$(ni get -p {.dtapiendpoint})/api/v1/problem/details/$(ni get -p {.pid})/comments"
   - echo "Authorization Api-Token $(ni get -p {.dtapitoken})"
-  - | 
+  - |
     set -x
     curl -X POST "$(ni get -p {.dtapiendpoint})/api/v1/problem/details/$(ni get -p {.pid})/comments" \
      -H "accept: application/json; charset=utf-8" \
      -H "Authorization: Api-Token $(ni get -p {.dtapitoken})" \
      -H "Content-Type: application/json; charset=utf-8" \
-     -d "{\"comment\":\"This is a comment from Relay. We are working on this!!\",\"user\":\"Relay Workflow\",\"context\":\"Relay\"}"  
+     -d "{\"comment\":\"This is a comment from Relay. We are working on this!!\",\"user\":\"Relay Workflow\",\"context\":\"Relay\"}"
   dependsOn:
-  - approval-post-problem-comment  
+  - approval-post-problem-comment
   spec:
     problemdetailstext: !Parameter problemdetailstext
     problemtitle: !Parameter problemtitle
@@ -59,7 +66,7 @@ steps:
     problemid: !Parameter problemid
     pid: !Parameter pid
     dtapitoken: !Secret dtapitoken
-    dtapiendpoint: !Secret dtapiendpoint  
+    dtapiendpoint: !Secret dtapiendpoint
 - name: log-problem-details
   image: relaysh/core
   spec:

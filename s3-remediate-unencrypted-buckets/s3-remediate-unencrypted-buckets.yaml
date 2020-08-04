@@ -1,5 +1,9 @@
 apiVersion: v1
-description: Find all publicly write-able S3 buckets and restricts them
+summary: Remediate unencrypted S3 buckets
+description: This workflow finds unencrypted S3 buckets and enables default encryption on those buckets.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/s3-remediate-unencrypted-buckets
+tags:
+  - security
 
 # Uncomment out this trigger to run this workflow hourly.
 # triggers:
