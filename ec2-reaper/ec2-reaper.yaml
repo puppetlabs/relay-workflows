@@ -1,7 +1,6 @@
 apiVersion: v1
 summary: Terminate EC2 instances without valid lifetime tag
-description: >
-  This workflow looks at all of the EC2 instances in a given account and region and selects a subset of those to terminate. Requires an AWS account with permissions to delete EC2 instances. The termination criteria are:\n\n* Not tagged with a termination date or lifetime after 4 minutes\n* The termination_date or lifetime tags are present but cannot be parsed\n* The termination_date or lifetime tags indicate that the instance has expired\n\nAn instance may be configured to never terminate if its lifetime tag has the special value indefinite. The `termination_date` or `lifetime` labels are present but cannot be parsed. \n* The `termination_date` or `lifetime` labels indicate that the instance has expired.\n\nAn instance may be configured to never terminate if its `lifetime` label has the special value `indefinite`. Other valid values for the `lifetime` label are of the form `<number><unit>` where `<number>` is any integer and `<unit>` is a time unit of `w`(weeks), `h`(hours), `d`(days) or `m`(months). So, as an example, if the `lifetime` label for an instance has a value of `43w` then it should be terminated after it's 43 weeks old.
+description: This workflow looks at all of the EC2 instances in a given account and region and selects a subset of those to terminate.
 homepage: https://github.com/puppetlabs/relay-workflows/tree/master/ec2-reaper
 tags:
   - cost optimization
