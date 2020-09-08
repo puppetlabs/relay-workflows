@@ -15,13 +15,6 @@ triggers:
       tag: !Data tag
       imageName: !Data name
 
-locals:
-  cluster: &cluster
-    name: cluster
-    url: !Secret cluster-master-url
-    cadata: !Secret cluster-cadata
-    token: !Secret cluster-token
-
 parameters:
   tag:
     description: image tag to change
@@ -54,7 +47,7 @@ steps:
   # dependsOn: approval
   spec:
     namespace: !Parameter namespace
-    cluster: *cluster
+    connection: !Connection { type: "kubernetes", name: "my-cluster-connection" }
     command: set
     args:
     - image

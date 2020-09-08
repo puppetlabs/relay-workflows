@@ -17,14 +17,12 @@ Before you run this workflow, you will need the following:
     - Click **Webhooks** at the top
     - Add a name for your webhook and paste the url in the box **Webhook URL**
     - Click **Create**
-3. Setup cluster secrets:
-    - Click **Setup**
-    - On the right sidebar, fill in the secrets **cluster-master-url**,
-      **cluster-cadata**, and **cluster-token** with your Kubernetes cluster
-      credentials. You can find instructions for creating those by following
-      this guide:
-      https://kubernetes.io/docs/tasks/access-application-cluster/access-cluster/
-      or by following a guide provided by your Kubernetes cloud provider.
+3. Setup your Kubernetes connection
+    - In the Relay page for the workflow, expand the **Setup** sidebar
+    - In the sidebar, click the plus "+" under Connections for the Kubernetes connection and give it a name
+    - Fill in the **Cluster server** field with the URL to your Kubernetes master (`kubectl cluster-info` will show this)
+    - Paste the PEM-encoded CA certificate for your cluster in the **Certificate authority** field. This command will display the CA cert: `kubectl config view --raw --flatten -o json | jq -r '.clusters[] | select(.name == "'$(kubectl config current-context)'") | .cluster."certificate-authority-data"' | base64 --decode`
+    - Paste an access token into the **Token** field. This can be retrieved with the following command: `kubectl config view --raw --minify --flatten -o jsonpath='{.users[].user.auth-provider.config.access-token}'`
 4. Creating a new tag for your docker image and pushing it to Docker Hub should
    result in an update to your deployment container. You can validate with:
    `kubectl -n <namespace> get deployments <deploymentName> -o=jsonpath='{.metadata.name}{": "}{range .spec.template.spec.containers[*]}{.image}{end}'`.
