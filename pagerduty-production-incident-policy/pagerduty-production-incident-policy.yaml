@@ -133,3 +133,15 @@ steps:
     channel: !Output [create-slack-room, channelID]
     message: *message
     username: 'Relay workflow'
+# Submit a change event back to pagerduty indicating that the process was initiated
+- name: post-change-event
+  dependsOn: create-slack-room
+  image: relaysh/pagerduty-step-change-event-send
+  spec:
+    connection: !Connection [pagerduty, my-pagerduty-account]
+    source: Relay Workflow
+    summary: !Fn.concat
+      - "Automated incident response via Relay. JIRA created: "
+      - !Output [create-jira-ticket, issue]
+      - " Slack room created: #"
+      - !Fn.concat [!Parameter slackRoom, !Output [lowercase-id, incidentID]]
