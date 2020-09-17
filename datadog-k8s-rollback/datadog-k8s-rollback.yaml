@@ -1,0 +1,33 @@
+parameters:
+  deployment:
+    description: Name of the kubernetes deployment to roll back
+    default: nginx-deployment
+  public_id:
+    description: Numeric part of the "friendly" id of the Datadog Incident to update; for IR-3 use "3"
+  namespace:
+    description: Kubernetes namespace for the deployment
+    default: default
+
+
+steps:
+  - name: kubectl-deployment-rollback
+    image: relaysh/kubernetes-step-kubectl
+    spec:
+      namespace: !Parameter namespace
+      cluster:
+        name: my-kubernetes-cluster
+        connection: !Connection { type: kubernetes, name: my-kubernetes-cluster }
+      command: rollout
+      args: !Fn.concat ["undo ", "deployment.v1.apps/", !Parameter deployment]
+  - name: convert-incident-id
+    image: relaysh/datadog-step-incident-extract-id
+    spec:
+      connection: !Connection {type: datadog, name: my-datadog-keys }
+      public_id: !Parameter public_id
+  - name: update-timeline
+    image: relaysh/datadog-step-incident-timeline-update
+    dependsOn: kubectl-deployment-rollback
+    spec:
+      connection: !Connection {type: datadog, name: my-datadog-keys }
+      incident_id: !Output {from: convert-incident-id, name: incident_id}
+      timeline_cell_content: !Fn.concat ["Rolled back: ", !Parameter deployment, " - [view logs in Relay](https://app.relay.sh/workflows/datadog-k8s-rollback)"]
