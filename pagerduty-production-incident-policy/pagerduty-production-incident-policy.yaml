@@ -1,0 +1,147 @@
+apiVersion: v1
+summary: When a PagerDuty incident is triggered, initiate the incident remediation policy
+description: >
+  This workflow responds to a PagerDuty incident by creating a Jira ticket and Slack channel for the incident, and pinging the current on-call person with the details.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/pagerduty-production-incident-policy
+tags:
+  - incident response
+
+parameters:
+  jiraProject:
+    description: 'The Jira Project ticker under which incident tickets should be filed.'
+    default: 'RLY'
+  jiraIssueSummary:
+    description: 'The Jira ticket title. Will be postfixed with the PagerDuty issue ID.'
+    default: 'Production Incident. PagerDuty Issue: '
+  jiraIssueType:
+    description: 'The Jira ticket type to be created.'
+    default: 'Task'
+  slackRoom:
+    description: 'The incidet response slack room name. Will be postfixed with the PagerDuty issue ID'
+    default: 'team-relay-production-incident-'
+  slackRoomTopic:
+    description: 'The channel topic to be set in the slack room. Will be postfixed with the jira ticket'
+    default: 'A production incident has occurred and jira ticket created. The Jira ticket is: '
+  processDescription:
+    description: 'The production incident remediation policy details to be sent to the slack room at the start of an incident'
+    default: 'No details about process have been entered into the workflow.'
+
+  incidentID:
+    description: 'The PagerDuty incident ID. Will be automatically filled in.'
+  incidentTitle:
+    description: 'The PagerDuty incident Title. Will be automatically filled in.'
+  incidentURL:
+    description: 'The PagerDuty incident URL. Will be automatically filled in.'
+  incidentUrgency:
+    description: 'The PagerDuty incident urgency. Will be automatically filled in.'
+  serviceName:
+    description: 'The PagerDuty incident service name. Will be automatically filled in.'
+  assigneeID:
+    description: "The PagerDuty incident on-call person's ID. Will be automatically filled in."
+
+locals:
+  message: &message !Fn.concat
+  - '⚠️ *<'
+  - !Parameter incidentURL
+  - '|'
+  - !Parameter incidentTitle
+  - '>* ⚠️'
+  - "\nAffected service: "
+  - !Parameter serviceName
+  - "\nIncident response process: "
+  - !Parameter processDescription
+
+triggers:
+- name: pagerduty-incident
+  source:
+    type: webhook
+    image: relaysh/pagerduty-trigger-incident-triggered:latest
+  binding:
+    parameters:
+      incidentID: !Data id
+      incidentTitle: !Data title
+      incidentUrgency: !Data urgency
+      incidentURL: !Data appURL
+      serviceName: !Data serviceName
+      assigneeID: !Data assignments[0].assigneeID
+
+steps:
+# get the person on calls email address so it can be used in subseuquent steps
+- name: get-pagerduty-user
+  dependsOns: check-urgency
+  image: relaysh/pagerduty-step-user-get-by-id
+  spec:
+    connection: !Connection [pagerduty, my-pagerduty-account]
+    userID: !Parameter assigneeID
+# get the member id of the user in slack so we can send them a message and invite them to a room
+- name: get-slack-user
+  dependsOn: get-pagerduty-user
+  image: relaysh/slack-step-get-member-id-by-email
+  spec:
+    connection: !Connection [slack, my-slack-account]
+    email: !Output [get-pagerduty-user, email]
+# Get the user id of the jira user so that we can assign the production incident ticket to them
+- name: get-jira-user
+  dependsOn: get-pagerduty-user
+  image: relaysh/jira-step-user-search
+  spec:
+    connection: !Connection [jira, my-jira-account]
+    userEmail: !Output [get-pagerduty-user, email]
+# Create the jira ticket and assign the on-call person
+- name: create-jira-ticket
+  dependsOn: get-jira-user
+  image: relaysh/jira-step-issue-create
+  spec:
+    connection: !Connection [jira, my-jira-account]
+    issue:
+      fields:
+        summary: !Fn.concat [!Parameter jiraIssueSummary, !Parameter incidentID]
+        type:
+          name: !Parameter jiraIssueType
+        assignee:
+          name: !Output [get-jira-user, userID]
+        project:
+          key: !Parameter jiraProject
+# Lowercase the PagerDuty incident ID as slack channel names cannot contain uppercase letters
+- name: lowercase-id
+  dependsOn: get-pagerduty-user
+  image: relaysh/core
+  spec:
+    incidentID: !Parameter incidentID
+  input:
+    - VALUE=$(echo "$(ni get -p {.incidentID})" | tr '[:upper:]' '[:lower:]')
+    - echo "Got $VALUE as the lowercase incident ID"
+    - ni output set --key incidentID --value $VALUE
+# Create the incident slack room, set the topic, and invite the on-call person
+- name: create-slack-room
+  dependsOn:
+    - get-slack-user
+    - create-jira-ticket
+    - lowercase-id
+  image: relaysh/slack-step-channel-create
+  spec:
+    connection: !Connection [slack, my-slack-account]
+    channel: !Fn.concat [!Parameter slackRoom, !Output [lowercase-id, incidentID]]
+    topic: !Fn.concat [!Parameter slackRoomTopic, !Output [create-jira-ticket, issue]]
+    memberID: !Output [get-slack-user, memberID]
+# Message the new slack room with the incident details and process
+- name: message-slack-room
+  dependsOn: create-slack-room
+  image: relaysh/slack-step-message-send
+  spec:
+    connection: !Connection [slack, my-slack-account]
+    channel: !Output [create-slack-room, channelID]
+    message: *message
+    username: 'Relay workflow'
+# Submit a change event back to pagerduty indicating that the process was initiated
+- name: post-change-event
+  dependsOn: create-slack-room
+  image: relaysh/pagerduty-step-change-event-send
+  spec:
+    connection: !Connection [pagerduty, my-pagerduty-account]
+    source: Relay Workflow
+    summary: !Fn.concat
+      - "Automated incident response via Relay. JIRA created: "
+      - !Output [create-jira-ticket, issue]
+      - " Slack room created: #"
+      - !Fn.concat [!Parameter slackRoom, !Output [lowercase-id, incidentID]]
