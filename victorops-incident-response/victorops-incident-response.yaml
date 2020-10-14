@@ -63,14 +63,14 @@ triggers:
         - "/incident/"
         - !Data incident
         - "/details"
-      entityID: !Data webhook_payload.entity_id
+      incidentEntityID: !Data webhook_payload.entity_id
 
 steps:
 # Create the jira ticket in the correct project
 - name: create-jira-ticket
   image: relaysh/jira-step-issue-create
   spec:
-    connection: !Connection [jira, jira-cloud]
+    connection: !Connection [jira, my-jira-account]
     issue:
       fields:
         summary: !Fn.concat [!Parameter jiraIssueSummary, !Parameter incidentID]
@@ -79,24 +79,35 @@ steps:
         project:
           key: !Parameter jiraProject
 # Create the incident slack room, set the topic, and invite the on-call person
-# - name: create-slack-room
-#   dependsOn:
-#     - create-jira-ticket
-#   image: relaysh/slack-step-channel-create
-#   spec:
-#     connection: !Connection [slack, puppet-workspace]
-#     channel: !Fn.concat [!Parameter slackRoom, !Parameter incidentID]
-#     topic: !Fn.concat [!Parameter slackRoomTopic, !Output [create-jira-ticket, issue]]
+- name: create-slack-room
+  dependsOn:
+    - create-jira-ticket
+  image: relaysh/slack-step-channel-create
+  spec:
+    connection: !Connection [slack, my-slack-account]
+    channel: !Fn.concat [!Parameter slackRoom, !Parameter incidentID]
+    topic: !Fn.concat [!Parameter slackRoomTopic, !Output [create-jira-ticket, issue]]
 # Message the new slack room with the incident details and process
 - name: message-slack-room
-#   dependsOn: create-slack-room
+  dependsOn: create-slack-room
   image: relaysh/slack-step-message-send
   spec:
-    connection: !Connection [slack, puppet-workspace]
-#     channel: !Output [create-slack-room, channelID]
-    channel: prog-relay-testing
+    connection: !Connection [slack, my-slack-account]
+    channel: !Output [create-slack-room, channelID]
     message: *message
     username: 'Relay workflow'
+# Let the general room know there's a new incident channel
+- name: message-general-slack
+  dependsOn: create-slack-room
+  image: relaysh/slack-step-message-send
+  spec:
+    connection: !Connection [slack, my-slack-account]
+    channel: general
+    message: !Fn.concat
+      - ":rotating_light: New incident declared: "
+      - !Parameter incidentTitle
+      - ". To participate, join channel: #"
+      - !Fn.concat [!Parameter slackRoom, !Parameter incidentID]
 # Submit a change event back to VictorOps indicating that the process was initiated
 - name: update-timeline
   dependsOn: message-slack-room

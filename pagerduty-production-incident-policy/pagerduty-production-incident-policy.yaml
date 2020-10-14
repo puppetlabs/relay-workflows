@@ -68,7 +68,6 @@ triggers:
 steps:
 # get the person on calls email address so it can be used in subseuquent steps
 - name: get-pagerduty-user
-  dependsOns: check-urgency
   image: relaysh/pagerduty-step-user-get-by-id
   spec:
     connection: !Connection [pagerduty, my-pagerduty-account]
