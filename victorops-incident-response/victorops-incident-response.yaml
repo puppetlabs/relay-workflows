@@ -54,16 +54,16 @@ triggers:
   binding:
     parameters:
       incidentID: !Data incident
-      incidentTitle: !Data webhook_payload.entity_display_name
-      incidentMessage: !Data webhook_payload.state_message
-      incidentUrgency: !Data webhook_payload.entity_state
+      incidentTitle: !Data entity_display_name
+      incidentMessage: !Data state_message
+      incidentUrgency: !Data entity_state
       incidentURL: !Fn.concat
         - "https://portal.victorops.com/ui/"
-        - !Data webhook_payload.vo_organization_id
+        - !Data vo_organization_id
         - "/incident/"
         - !Data incident
         - "/details"
-      incidentEntityID: !Data webhook_payload.entity_id
+      incidentEntityID: !Data entity_id
 
 steps:
 # Create the jira ticket in the correct project
@@ -113,11 +113,11 @@ steps:
   dependsOn: message-slack-room
   image: relaysh/victorops-step-incident-update
   spec:
-    endpoint_url: !Secret endpoint_url
-    routing_key: "relay"
-    entity_id: !Parameter incidentEntityID
-    entity_display_name: "Incident comms channels ready"
-    state_message: !Fn.concat
+    endpointURL: !Secret endpointURL
+    routingKey: "relay"
+    entityID: !Parameter incidentEntityID
+    entityDisplayName: "Incident comms channels ready"
+    stateMessage: !Fn.concat
       - "Automated incident response via Relay. JIRA created: "
       - !Output [create-jira-ticket, issue]
       - " Slack room created: #"

@@ -12,7 +12,7 @@ Before you run this workflow, you will need the following connections configured
     - `chat:write.public` to send messages to channels without joining
     - `chat:write.customize` to sennd messages as a customized username and avatar
 
-You'll also need to enable the REST integration point on VictorOps and add the generated endpoint URL as a workflow Secret named `endpoint_url`.
+You'll also need to enable the REST integration point on VictorOps and add the generated endpoint URL as a workflow Secret named `endpointURL`. Note that the incoming webhook from VictorOps to Relay uses the [escalation webhook integration](https://help.victorops.com/knowledge-base/escalation-webhooks/), not the Enterprise-level [custom webhooks](https://help.victorops.com/knowledge-base/custom-outbound-webhooks).
 
 ## Configure the workflow
 
