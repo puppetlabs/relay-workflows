@@ -1,0 +1,124 @@
+apiVersion: v1
+summary: When a VictorOps incident is triggered, initiate a reponse policy
+description: >
+  This workflow responds to a VictorOps incident by creating a Jira ticket and Slack channel for the incident, and posting the details back to the incident timeline
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/victorops-incident-response/
+tags:
+  - incident response
+
+parameters:
+  jiraProject:
+    description: 'The Jira Project ticker under which incident tickets should be filed.'
+    default: 'RLY'
+  jiraIssueSummary:
+    description: 'The Jira ticket title. Will be postfixed with the VictorOps incident ID.'
+    default: 'Issue created to track VictorOps incident '
+  jiraIssueType:
+    description: 'The Jira ticket type to be created.'
+    default: 'Task'
+  slackRoom:
+    description: 'The incident response slack room name. Will be postfixed with the VictorOps incident ID'
+    default: 'team-relay-production-incident-'
+  slackRoomTopic:
+    description: 'The channel topic to be set in the slack room. Will be postfixed with the jira ticket'
+    default: 'A production incident has occurred and jira ticket created. The Jira ticket is: '
+
+  incidentID:
+    description: 'The VictorOps incident ID. Will be automatically filled in.'
+  incidentTitle:
+    description: 'The VictorOps incident Title. Will be automatically filled in.'
+  incidentMessage:
+    description: 'Additional context provided when the incident was created'
+  incidentUrgency:
+    description: 'The VictorOps incident urgency. Will be automatically filled in.'
+  incidentURL:
+    description: 'The VictorOps incident URL. Will be automatically filled in.'
+  incidentEntityID:
+    description: 'VictorOps internal entity ID, to associate updates with the incident via API.'
+
+locals:
+  message: &message !Fn.concat
+  - ':warning: *<'
+  - !Parameter incidentURL
+  - '|'
+  - !Parameter incidentTitle
+  - '>* :warning:'
+  - "\n:information_desk_person: Additional context: "
+  - !Parameter incidentMessage
+
+triggers:
+- name: victorops-incident
+  source:
+    type: webhook
+    image: relaysh/victorops-trigger-incident-triggered:latest
+  binding:
+    parameters:
+      incidentID: !Data incident
+      incidentTitle: !Data entity_display_name
+      incidentMessage: !Data state_message
+      incidentUrgency: !Data entity_state
+      incidentURL: !Fn.concat
+        - "https://portal.victorops.com/ui/"
+        - !Data vo_organization_id
+        - "/incident/"
+        - !Data incident
+        - "/details"
+      incidentEntityID: !Data entity_id
+
+steps:
+# Create the jira ticket in the correct project
+- name: create-jira-ticket
+  image: relaysh/jira-step-issue-create
+  spec:
+    connection: !Connection [jira, my-jira-account]
+    issue:
+      fields:
+        summary: !Fn.concat [!Parameter jiraIssueSummary, !Parameter incidentID]
+        type:
+          name: !Parameter jiraIssueType
+        project:
+          key: !Parameter jiraProject
+# Create the incident slack room, set the topic, and invite the on-call person
+- name: create-slack-room
+  dependsOn:
+    - create-jira-ticket
+  image: relaysh/slack-step-channel-create
+  spec:
+    connection: !Connection [slack, my-slack-account]
+    channel: !Fn.concat [!Parameter slackRoom, !Parameter incidentID]
+    topic: !Fn.concat [!Parameter slackRoomTopic, !Output [create-jira-ticket, issue]]
+# Message the new slack room with the incident details and process
+- name: message-slack-room
+  dependsOn: create-slack-room
+  image: relaysh/slack-step-message-send
+  spec:
+    connection: !Connection [slack, my-slack-account]
+    channel: !Output [create-slack-room, channelID]
+    message: *message
+    username: 'Relay workflow'
+# Let the general room know there's a new incident channel
+- name: message-general-slack
+  dependsOn: create-slack-room
+  image: relaysh/slack-step-message-send
+  spec:
+    connection: !Connection [slack, my-slack-account]
+    channel: general
+    message: !Fn.concat
+      - ":rotating_light: New incident declared: "
+      - !Parameter incidentTitle
+      - ". To participate, join channel: #"
+      - !Fn.concat [!Parameter slackRoom, !Parameter incidentID]
+# Submit a change event back to VictorOps indicating that the process was initiated
+- name: update-timeline
+  dependsOn: message-slack-room
+  image: relaysh/victorops-step-incident-update
+  spec:
+    endpointURL: !Secret endpointURL
+    routingKey: "relay"
+    entityID: !Parameter incidentEntityID
+    entityDisplayName: "Incident comms channels ready"
+    stateMessage: !Fn.concat
+      - "Automated incident response via Relay. JIRA created: "
+      - !Output [create-jira-ticket, issue]
+      - " Slack room created: #"
+      - !Fn.concat [!Parameter slackRoom, !Parameter incidentID]
