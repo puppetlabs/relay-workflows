@@ -19,7 +19,7 @@ tags:
 #       terminationDateTag: termination_date
 
 parameters:
-  region:
+  awsRegion:
     description: The AWS region to run in
     default: us-east-1
   terminationDateTag:
@@ -38,7 +38,7 @@ steps:
   spec:
     aws: &aws
       connection: !Connection { type: aws, name: my-aws-account }
-      region: !Parameter region
+      region: !Parameter awsRegion
 - name: filter-instances
   image: relaysh/core:latest-python
   spec:
