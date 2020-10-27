@@ -13,7 +13,7 @@ tags:
 #     schedule: '0 * * * *'
 #   binding:
 #     parameters:
-#       region: us-east-1
+#       awsRegion: us-east-1
 #       dryRun: true
 #       lifetimeTag: lifetime
 #       terminationDateTag: termination_date
