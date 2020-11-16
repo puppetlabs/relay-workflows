@@ -9,7 +9,7 @@ selects a subset of those to terminate. The termination criteria are:
 An instance may be configured to never terminate if its `lifetime` label has
 the special value `indefinite`. Other valid values for the `lifetime` label are
 of the form `<number><unit>` where `<number>` is any integer and `<unit>` is a
-time unit of `w` (weeks), `h` (hours), `d` (days)` or `m` (months). So, as an
+time unit of `w` (weeks), `h` (hours), `d` (days) or `m` (months). So, as an
 example, if the `lifetime` label for an instance has a value of `43w` then it
 should be terminated after it's 43 weeks old.
 
