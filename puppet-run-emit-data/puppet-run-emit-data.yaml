@@ -1,0 +1,65 @@
+version: v1
+parameters:
+  # From the trigger
+  host:
+    description: "Hostname that submitted the report" 
+  logs:
+    description: "Array of the log lines that were notice severity or greater."
+  summary:
+    description: "Long-form summary of the puppet run"
+  status:
+    description: "Run status"
+  time:
+    description: "Timestamp of when the puppet run began"
+  facts:
+    description: "Full hash of puppet facts" 
+triggers:
+  - name: puppet-report
+    source:
+      type: push
+    binding:
+      parameters:
+        host: !Data report.host
+        logs: !Data report.logs
+        status: !Data report.status
+        summary: !Data report.summary
+        time: !Data report.time
+        facts: !Data facts
+steps:
+- name: host
+  image: relaysh/core
+  spec:
+    host: !Parameter host
+  input:
+  - ni get | jq .host
+- name: logs
+  image: relaysh/core
+  spec:
+    logs: !Parameter logs
+  input:
+  - ni get | jq .logs
+- name: status
+  image: relaysh/core
+  spec:
+    status: !Parameter status
+  input:
+    - ni get | jq .status
+- name: summary
+  image: relaysh/core
+  spec:
+    summary: !Parameter summary
+  input:
+    - ni get | jq .summary
+- name: time
+  image: relaysh/core
+  spec:
+    time: !Parameter time
+  input:
+    - ni get | jq .time
+- name: facts
+  image: relaysh/core
+  spec:
+    facts: !Parameter facts
+  input:
+    - ni get | jq .facts
+    
