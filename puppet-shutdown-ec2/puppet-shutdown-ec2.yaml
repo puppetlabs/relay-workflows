@@ -53,7 +53,7 @@ steps:
         connection: !Connection { type: aws, name: my-aws-account }
         region: !Secret awsRegion 
       filters:
-        dns-name: !Output { from: get-host-fqdn, name: fqdn }
+        dnsName: !Output { from: get-host-fqdn, name: fqdn }
   - name: output-instance-id
     image: relaysh/core:latest-python
     spec:
