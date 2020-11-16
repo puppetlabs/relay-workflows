@@ -1,0 +1,76 @@
+apiVersion: v1
+summary: When sudoers file changes on my Puppet run, shut down the EC2 instance. 
+description: >
+  This workflow listens for a sudoers file change on a Puppet run and shuts down the EC2 instance in response
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/puppet-shutdown-ec2
+tags:
+  - Configuration
+  - Incident response
+  - Security
+
+parameters:
+  # From the trigger
+  logs:
+    description: "Log output of the Puppet run" 
+  facts:
+    description: "Facts emitted by the Puppet run"
+triggers:
+  - name: puppet-report
+    source:
+      type: push
+    binding:
+      parameters:
+        logs: !Data report.logs
+        facts: !Data facts
+steps:
+  - name: view-puppet-logs
+    image: relaysh/core
+    spec:
+      logs: !Parameter logs
+    input:
+      - ni get | jq .logs
+  - name: detect-sudoers
+    image: relaysh/core
+    dependsOn: view-puppet-logs
+    spec:
+      logs: !Parameter logs
+    input:
+    - DETECTED_CHANGES=$(ni get | jq -e -r --arg re '\/Sudo::Conf\[.*\]\/' '[.logs[] | select(.|test($re))] | join(", ")')
+    - 'echo "Detected changes, if any: ${DETECTED_CHANGES}"'
+    - 'if [ x = x${DETECTED_CHANGES} ] ; then ni output set -k detected_changes -v none; else ni output set -k detected_changes -v "${DETECTED_CHANGES}" ; fi'
+  - name: get-host-fqdn
+    image: relaysh/core
+    spec:
+      facts: !Parameter facts
+    input:
+      - FQDN=$(ni get | jq .facts.fqdn)
+      - echo $FQDN
+      - ni output set -k fqdn -v "${FQDN}"
+  - name: lookup-ec2-instance
+    image: relaysh/aws-ec2-step-instances-describe
+    spec:
+      aws: &aws
+        connection: !Connection { type: aws, name: my-aws-account }
+        region: !Secret awsRegion 
+      filters:
+        dns-name: !Output { from: get-host-fqdn, name: fqdn }
+  - name: output-instance-id
+    image: relaysh/core:latest-python
+    spec:
+      instances: !Output { from: lookup-ec2-instance, name: instances } 
+    when: 
+    - !Fn.notEquals [ !Output { from: lookup-ec2-instance, name: instances }, ""]      
+    input:
+     - echo -e "from relay_sdk import Interface, Dynamic as D\nrelay=Interface()\nrelay.outputs.set('instanceID', relay.get(D.instances)[0]['InstanceId'])" | python
+  - name: approval
+    description: Wait for approval
+    type: approval
+    dependsOn:
+    - output-instance-id
+    - detect-sudoers
+  - name: ec2-stop-instances
+    image: relaysh/aws-ec2-step-instances-stop
+    spec:
+      aws: *aws
+      instanceIDs: !Output { from: output-instance-id, name: instanceID } 
+    dependsOn: approval
