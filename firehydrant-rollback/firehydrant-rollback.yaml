@@ -1,0 +1,49 @@
+# This workflow rolls back a kubernetes deployment
+# in a given environment 
+
+apiVersion: v1
+description: When a production FireHydrant incident occurs, roll back a change.
+parameters:
+  incidentID:
+    description: Internal FireHydrant UUID of the incident
+  incidentName:
+    description: Human-friendly name of the incident
+  incidentSummary:
+    description: Summary description of the incident
+  incidentService:
+    description: Service affected by the incident
+  incidentEnvironment:
+    description: Environment affected by the incident (maps to kubernetes namespace)
+  slackChannelID: 
+    description: Internal ID of the Slack channel created to manage the incident
+  slackChannelName:
+    description: Human friendly name of the Slack channel for incident communications
+triggers:
+- name: firehydrant-incident
+  source:
+    type: webhook
+    image: relaysh/stdlib-trigger-json
+  binding:
+    parameters:
+      incidentID: !Data incident_id
+      incidentName: !Data name
+      incidentSummary: !Data summary
+      incidentService: !Data service
+      incidentEnvironment: !Data environment
+      slackChannelID: !Data channel_id
+      slackChannelName: !Data channel_name
+steps:
+- name: kubectl-deployment-rollback
+  image: relaysh/gcp-step-rollout-undo
+  spec:
+    namespace: !Parameter incidentEnvironment
+    cluster: "mycluster"
+    zone: "us-central1-c"
+    google: !Connection { type: gcp, name: relay-service-account }
+    deployment: !Parameter incidentService
+- name: post-update
+  image: relaysh/firehydrant-step-timeline-update
+  spec:
+    apiKey: !Secret apiKey
+    incidentID: !Parameter incidentID
+    message: !Fn.concat ["Update from Relay rollback: ", !Output {from: kubectl-deployment-rollback, name: result} ]
