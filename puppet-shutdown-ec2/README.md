@@ -1,3 +1,5 @@
+# Stop EC2 instance when sudoers file is changed with Puppet 
+
 This workflow is an example of responding to changes in a Puppet run. In this example, when a sudoers file change is detected, the workflow will stop the EC2 instance that is running the Puppet agent. 
 
 ## Prerequisites

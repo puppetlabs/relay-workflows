@@ -1,3 +1,5 @@
+# Emit Puppet run data
+
 This workflow demonstrates what data is emitted by a Puppet run to Relay. 
 
 ## Prerequisites

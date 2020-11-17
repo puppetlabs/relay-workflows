@@ -9,8 +9,6 @@ parameters:
     description: "Long-form summary of the puppet run"
   status:
     description: "Run status"
-  time:
-    description: "Timestamp of when the puppet run began"
   facts:
     description: "Full hash of puppet facts" 
 triggers:
@@ -23,7 +21,6 @@ triggers:
         logs: !Data report.logs
         status: !Data report.status
         summary: !Data report.summary
-        time: !Data report.time
         facts: !Data facts
 steps:
 - name: host
@@ -50,12 +47,6 @@ steps:
     summary: !Parameter summary
   input:
     - ni get | jq .summary
-- name: time
-  image: relaysh/core
-  spec:
-    time: !Parameter time
-  input:
-    - ni get | jq .time
 - name: facts
   image: relaysh/core
   spec:
