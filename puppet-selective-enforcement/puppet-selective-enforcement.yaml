@@ -1,4 +1,11 @@
-piVersion: v1
+apiVersion: v1
+summary: Selectively enforce Puppet run 
+description: >
+  This workflow selectively enforces a Puppet run when changes are detected 
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/puppet-selective-enforcement
+tags:
+  - Configuration
+
 parameters:
   logs:
     description: "Array of the log lines that were notice severity or greater."
