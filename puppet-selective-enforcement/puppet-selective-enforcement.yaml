@@ -1,0 +1,53 @@
+piVersion: v1
+parameters:
+  logs:
+    description: "Array of the log lines that were notice severity or greater."
+  host:
+    description: "Hostname that submitted the report" 
+triggers:
+  - name: puppet-report
+    source:
+      type: push
+    binding:
+      parameters:
+        host: !Data report.host
+        logs: !Data report.logs
+steps:
+  - name: view-puppet-logs
+    image: relaysh/core
+    spec:
+      logs: !Parameter logs
+    input:
+      - ni get | jq .logs
+  - name: detect-corrective-changes
+    image: relaysh/core
+    dependsOn: view-puppet-logs
+    spec:
+      logs: !Parameter logs
+    input:
+    - DETECTED_CHANGES=$(ni get | jq -e -r --arg re '\(corrective\)' '[.logs[] | select(.|test($re))] | join(", ")')
+    - 'echo "Detected changes, if any: ${DETECTED_CHANGES}"'
+    - 'if [ x = x${DETECTED_CHANGES} ] ; then ni output set -k detected_changes -v none; else ni output set -k detected_changes -v "${DETECTED_CHANGES}" ; fi'
+  - name: approval
+    description: Wait for approval to run Puppet for real
+    type: approval
+    dependsOn: detect-corrective-changes
+    when: 
+    - !Fn.notEquals [ !Output { from: detect-corrective-changes, name: detected_changes }, ""]  
+  - name: start-puppet-run
+    image: relaysh/puppet-step-run-start
+    dependsOn: approval
+    spec:
+      connection: &puppet
+        relayAPIURL: https://api.relay.sh/
+        token: !Secret token
+      environment: production
+      scope:
+        nodes: !Parameter host
+  - name: wait-for-puppet-run
+    image: relaysh/puppet-step-run-wait
+    dependsOn: start-puppet-run
+    spec:
+      connection: *puppet
+      id:
+        !Output [ start-puppet-run, id ]
