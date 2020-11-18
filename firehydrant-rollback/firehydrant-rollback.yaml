@@ -1,8 +1,10 @@
 # This workflow rolls back a kubernetes deployment
-# in a given environment 
+# in a given environment
 
 apiVersion: v1
+summary: Roll back a Kubernetes deployment from a FireHydrant incident runbook
 description: When a production FireHydrant incident occurs, roll back a change.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/firehydrant-rollback
 parameters:
   incidentID:
     description: Internal FireHydrant UUID of the incident
@@ -14,7 +16,7 @@ parameters:
     description: Service affected by the incident
   incidentEnvironment:
     description: Environment affected by the incident (maps to kubernetes namespace)
-  slackChannelID: 
+  slackChannelID:
     description: Internal ID of the Slack channel created to manage the incident
   slackChannelName:
     description: Human friendly name of the Slack channel for incident communications

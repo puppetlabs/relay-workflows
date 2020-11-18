@@ -1,15 +1,11 @@
 apiVersion: v1
-summary: Emit Puppet run data in Relay
-description: >
-  This workflow emits Puppet run data in Relay
+summary: Emit Puppet run data
+description: This workflow demonstrates what data is emitted by a Puppet run to Relay.
 homepage: https://github.com/puppetlabs/relay-workflows/tree/master/puppet-run-emit-data
-tags:
-  - Configuration
-
 parameters:
   # From the trigger
   host:
-    description: "Hostname that submitted the report" 
+    description: "Hostname that submitted the report"
   logs:
     description: "Array of the log lines that were notice severity or greater."
   summary:
@@ -17,7 +13,7 @@ parameters:
   status:
     description: "Run status"
   facts:
-    description: "Full hash of puppet facts" 
+    description: "Full hash of puppet facts"
 triggers:
   - name: puppet-report
     source:
@@ -60,4 +56,3 @@ steps:
     facts: !Parameter facts
   input:
     - ni get | jq .facts
-    
