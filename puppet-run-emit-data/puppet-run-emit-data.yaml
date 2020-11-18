@@ -1,6 +1,7 @@
 apiVersion: v1
 summary: Emit Puppet run data
 description: This workflow demonstrates what data is emitted by a Puppet run to Relay.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/puppet-run-emit-data
 parameters:
   # From the trigger
   host:
