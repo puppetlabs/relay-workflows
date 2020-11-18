@@ -4,6 +4,7 @@
 apiVersion: v1
 summary: Roll back a Kubernetes deployment from a FireHydrant incident runbook
 description: When a production FireHydrant incident occurs, roll back a change.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/firehydrant-rollback
 parameters:
   incidentID:
     description: Internal FireHydrant UUID of the incident
