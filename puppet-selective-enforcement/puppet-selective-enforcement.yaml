@@ -45,9 +45,7 @@ steps:
     image: relaysh/puppet-step-run-start
     dependsOn: approval
     spec:
-      connection: &puppet
-        relayAPIURL: https://api.relay.sh/
-        token: !Secret token
+      connection: !Connection { type: puppet, name: my-puppet-connection}
       environment: production
       scope:
         nodes: !Parameter host
@@ -55,6 +53,6 @@ steps:
     image: relaysh/puppet-step-run-wait
     dependsOn: start-puppet-run
     spec:
-      connection: *puppet
+      connection: !Connection { type: puppet, name: my-puppet-connection}
       id:
         !Output [ start-puppet-run, id ]
