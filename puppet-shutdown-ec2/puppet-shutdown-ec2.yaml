@@ -10,55 +10,53 @@ tags:
 
 parameters:
   # From the trigger
-  logs:
-    description: "Log output of the Puppet run" 
-  facts:
-    description: "Facts emitted by the Puppet run"
+  host:
+    description: The node that ran the Puppet agent
+  resourceStatuses:
+    description: The changed resources
+  watchType:
+    description: The resource type to watch for
+    default: 'Sudo::Conf'
 triggers:
   - name: puppet-report
     source:
       type: push
     binding:
       parameters:
-        logs: !Data report.logs
-        facts: !Data facts
+        host: !Data host
+        resourceStatuses: !Data resource_statuses
 steps:
-  - name: view-puppet-logs
+  - name: view-puppet-resources
     image: relaysh/core
     spec:
-      logs: !Parameter logs
+      resourceStatuses: !Parameter resourceStatuses
     input:
-      - ni get | jq .logs
-  - name: detect-sudoers
+      - ni get | jq .resourceStatuses
+  - name: detect-changes
     image: relaysh/core
-    dependsOn: view-puppet-logs
+    dependsOn: view-puppet-resources
     spec:
-      logs: !Parameter logs
+      resourceStatuses: !Parameter resourceStatuses
+      watchType: !Parameter watchType
     input:
-    - DETECTED_CHANGES=$(ni get | jq -e -r --arg re '\/Sudo::Conf\[.*\]\/' '[.logs[] | select(.|test($re))] | join(", ")')
+    - DETECTED_CHANGES=$(ni get | jq --arg type "$( ni get -p {.watchType} )" -r '.resourceStatuses | values | map(.containment_path | (to_entries[] | select(.value | startswith("\($type)[")) | .key) as $key | .[:$key+1] | join("/")) | unique[]')
     - 'echo "Detected changes, if any: ${DETECTED_CHANGES}"'
-    - 'if [ x = x${DETECTED_CHANGES} ] ; then ni output set -k detected_changes -v none; else ni output set -k detected_changes -v "${DETECTED_CHANGES}" ; fi'
-  - name: get-host-fqdn
-    image: relaysh/core
-    spec:
-      facts: !Parameter facts
-    input:
-      - FQDN=$(ni get | jq .facts.fqdn)
-      - echo $FQDN
-      - ni output set -k fqdn -v "${FQDN}"
+    - 'if [ x = x${DETECTED_CHANGES} ] ; then ni output set -k detectedChanges -v none; else ni output set -k detectedChanges -v "${DETECTED_CHANGES}" ; fi'
   - name: lookup-ec2-instance
     image: relaysh/aws-ec2-step-instances-describe
+    when:
+    - !Fn.notEquals [ !Output { from: detect-changes, name: detectedChanges }, none ]
     spec:
       aws: &aws
         connection: !Connection { type: aws, name: my-aws-account }
         region: !Secret awsRegion 
       filters:
-        dnsName: !Output { from: get-host-fqdn, name: fqdn }
+        dnsName: !Parameter host
   - name: output-instance-id
     image: relaysh/core:latest-python
     spec:
       instances: !Output { from: lookup-ec2-instance, name: instances } 
-    when: 
+    when:
     - !Fn.notEquals [ !Output { from: lookup-ec2-instance, name: instances }, ""]      
     input:
      - echo -e "from relay_sdk import Interface, Dynamic as D\nrelay=Interface()\nrelay.outputs.set('instanceID', relay.get(D.instances)[0]['InstanceId'])" | python
@@ -67,7 +65,7 @@ steps:
     type: approval
     dependsOn:
     - output-instance-id
-    - detect-sudoers
+    - detect-changes
   - name: ec2-stop-instances
     image: relaysh/aws-ec2-step-instances-stop
     spec:
