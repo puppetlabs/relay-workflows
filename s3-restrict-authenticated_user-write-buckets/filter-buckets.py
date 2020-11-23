@@ -12,9 +12,9 @@ bucketACLs = relay.get(D.bucketACLs)
 for bucketName in bucketACLs.keys():
     public_bucket = False
 
-    # If the URI of the grant is "http://acs.amazonaws.com/groups/global/AuthenticatedUsers" and the permission contains "READ", adding to list to remediate.
+    # If the URI of the grant is "http://acs.amazonaws.com/groups/global/AuthenticatedUsers" and the permission contains "WRITE", adding to list to remediate.
     for grant in bucketACLs[bucketName]:
-        if grant['Grantee']['Type'] == "Group" and grant['Grantee']['URI'] == "http://acs.amazonaws.com/groups/global/AuthenticatedUsers" and "READ" in str(grant['Permission']):
+        if grant['Grantee']['Type'] == "Group" and grant['Grantee']['URI'] == "http://acs.amazonaws.com/groups/global/AuthenticatedUsers" and "WRITE" in str(grant['Permission']):
             public_bucket = True
         else:
             continue
@@ -24,11 +24,11 @@ for bucketName in bucketACLs.keys():
     else:
         to_do_nothing.append(bucketName)
 
-print("\nFound {} bucket(s) that DON'T have public READ permissions:".format(len(to_do_nothing)))
+print("\nFound {} bucket(s) that DON'T have public WRITE permissions:".format(len(to_do_nothing)))
 print(*[bucket for bucket in to_do_nothing], sep = "\n")
 
-print("\nFound {} bucket(s) that have public READ permissions:".format(len(to_modify)))
+print("\nFound {} bucket(s) that have public WRITE permissions:".format(len(to_modify)))
 print(*[bucket for bucket in to_modify], sep = "\n")
 
-print('\nSetting output variable `buckets` with list of {} bucket(s) with public READ permissions.'.format(len(to_modify)))
+print('\nSetting output variable `buckets` with list of {} bucket(s) with public WRITE permissions.'.format(len(to_modify)))
 relay.outputs.set('buckets', to_modify)
