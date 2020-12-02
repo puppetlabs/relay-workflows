@@ -35,7 +35,7 @@ steps:
   image: relaysh/core:latest-python
   spec:
     bucketACLs: !Output {from: get-bucket-acls, name: bucketACLs}
-  inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/s3-restrict-authenticated_user-read_acp-bucket/filter-buckets.py
+  inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/s3-restrict-authenticated_user-read_acp-buckets/filter-buckets.py
 - name: approval
   description: Wait for approval to modify S3 buckets
   type: approval
