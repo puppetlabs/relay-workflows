@@ -43,11 +43,11 @@ if err == 0:
         else:
             to_delete.append(key)
 
-    formatted += '\nFound {} used key pairs:'.format(len(to_keep))
+    formatted += '\nFound {} used key pairs:\n'.format(len(to_keep))
     for key in to_keep:
         formatted += key + "\n"
 
-    formatted += '\nFound {} unused key pairs:'.format(len(to_delete))
+    formatted += '\nFound {} unused key pairs:\n'.format(len(to_delete))
     for key in to_delete:
         formatted += key + "\n"
 
