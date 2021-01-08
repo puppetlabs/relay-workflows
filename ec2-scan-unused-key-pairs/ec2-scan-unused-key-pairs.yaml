@@ -1,0 +1,49 @@
+apiVersion: v1
+summary: Notify about unused keypairs
+description: This workflow finds all EC2 key pairs that are not used by an EC2 instance and notifies a slack channel about them.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/ec2-scan-unused-key-pairs
+tags:
+  - security
+
+triggers:
+# Run at 7AM every Monday
+- name: schedule
+  source:
+    type: schedule
+    schedule: '0 7 * * 1'
+
+parameters:
+  awsRegion:
+    description: The AWS region to run in
+    default: us-east-1
+  slackChannel:
+    description: The Slack channel to notify
+    default: "#automation-notices"
+
+steps:
+- name: describe-instances
+  image: relaysh/aws-ec2-step-instances-describe
+  spec:
+    aws: &aws
+      connection: !Connection { type: aws, name: my-aws-account }
+      region: !Parameter awsRegion
+
+- name: describe-key-pairs
+  image: relaysh/aws-ec2-step-key-pairs-describe
+  spec:
+    aws: *aws
+
+- name: filter-key-pairs
+  image: relaysh/core:latest-python
+  spec:
+    instances: !Output {from: describe-instances, name: instances}
+    keyPairs: !Output { from: describe-key-pairs, name: keyPairs}
+  inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/ec2-remove-unused-key-pairs/filter-key-pairs.py
+
+- name: notify-team
+  image: relaysh/slack-step-message-send
+  spec:
+    connection: !Connection {type: slack, name: my-slack-token}
+    channel: !Parameter slackChannel
+    username: relay
+    message: !Output {from: filter-key-pairs, name: formatted}

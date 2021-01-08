@@ -16,7 +16,7 @@
             KeyName: keypair1
           - InstanceID: instance2
             KeyName: keypair2
-      describe-keypairs:
+      describe-key-pairs:
         spec:
           aws: !Connection [aws, test]
           region: us-east-1
