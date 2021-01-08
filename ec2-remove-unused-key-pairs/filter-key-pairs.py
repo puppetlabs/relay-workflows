@@ -56,3 +56,5 @@ if err == 0:
 
 print(formatted)
 relay.outputs.set('formatted',formatted)
+
+exit(0)
