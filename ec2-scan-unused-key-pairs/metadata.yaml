@@ -1,0 +1,40 @@
+ connections:
+   aws/test:
+     accessKeyID: AKIASAMPLEKEY
+     secretAccessKey: 6bkpuV9fF3LX1Yo79OpfTwsw8wt5wsVLGTPJjDTu
+
+ runs:
+   '1':
+     steps:
+      describe-instances:
+        spec:
+          aws: !Connection [aws, test]
+          region: us-east-1
+        outputs:
+          instances:
+          - InstanceID: instance1
+            KeyName: keypair1
+          - InstanceID: instance2
+            KeyName: keypair2
+      describe-key-pairs:
+        spec:
+          aws: !Connection [aws, test]
+          region: us-east-1
+        outputs:
+          keyPairs:
+          - KeyPairID: id1
+            KeyFingerprint: "de:ad:be:ef"
+            KeyName: keypair1
+          - KeyPairID: id2
+            KeyFingerprint: "ba:d1:de:ea"
+            KeyName: keypair2
+          - KeyPairID: id3
+            KeyFingerprint: "00:ff:ee:aa"
+            KeyName: keypair3
+      filter-key-pairs:
+        spec:
+          instances: !Output {from: describe-instances, name: instances}
+          keyPairs: !Output {from: describe-key-pairs, name: keyPairs}
+        outputs:
+          keyPairNames: keypair3
+          formatted: "Sample formatted output - found keypair3 unused"
