@@ -3,7 +3,7 @@ summary: Check http health status and restart EC2 instance if needed
 description: This workflow performs a general http health status and then restarts an EC2 instance in response if the http status is not 200.
 homepage: https://github.com/puppetlabs/relay-workflows/tree/master/http-health-check
 tags:
-  - operations
+  - incident response
 
 parameters:
   instanceID:

@@ -3,7 +3,7 @@ summary: Provision an EC2 instance and configure it with Bolt
 description: This workflow uses Terraform to provision an EC2 instance, then it runs a Bolt plan to configure it.
 homepage: https://github.com/puppetlabs/relay-workflows/tree/master/ec2-provision-and-configure-with-bolt
 tags:
-  - operations
+  - continuous delivery
 
 parameters:
   terraformRepository:
