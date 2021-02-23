@@ -1,47 +1,47 @@
-  apiVersion: v1
-  summary: Delete empty Azure Load Balancers
-  description: This workflow finds empty Azure load balancers by locating load balancers that have no backend configurations. It then terminates these load balancers.
-  homepage: https://github.com/puppetlabs/relay-workflows/tree/master/azure-delete-empty-loadbalancers
-  tags:
-    - cost optimization
+apiVersion: v1
+summary: Delete empty Azure Load Balancers
+description: This workflow finds empty Azure load balancers by locating load balancers that have no backend configurations. It then terminates these load balancers.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/azure-delete-empty-loadbalancers
+tags:
+  - cost optimization
 
-  # Uncomment out this trigger to run this workflow hourly.
-  # triggers:
-  # - name: schedule
-  #   source:
-  #     type: schedule
-  #     schedule: '0 * * * *'
-  #   binding:
-  #     parameters:
-  #       dryRun: true
+# Uncomment out this trigger to run this workflow hourly.
+# triggers:
+# - name: schedule
+#   source:
+#     type: schedule
+#     schedule: '0 * * * *'
+#   binding:
+#     parameters:
+#       dryRun: true
 
-  parameters:
-    dryRun:
-      description: True if you don't want to perform actual WRITE operations
-      default: 'true'
-  steps:
-  - name: list-azure-load-balancers
-    image: relaysh/azure-network-step-load-balancer-list
-    spec:
-      azure: &azure
-        connection: !Connection { type: azure, name: my-azure-account }
-  - name: filter-loadbalancers
-    image: relaysh/core:latest-python
-    spec:
-      loadBalancers: !Output {from: list-azure-load-balancers, name: loadBalancers}
-    inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/azure-delete-empty-loadbalancers/filter-loadbalancers.py
-  - name: approval
-    description: Wait for approval
-    type: approval
-    dependsOn: filter-loadbalancers
-    when:
-    - !Fn.equals [!Parameter dryRun, 'false']
-  - name: delete-azure-lbs
-    image: relaysh/azure-network-step-load-balancer-delete
-    dependsOn: approval
-    when:
-    - !Fn.equals [!Parameter dryRun, 'false']
-    spec:
-      azure: *azure
-      resourceIDs: !Output {from: filter-loadbalancers, name: resourceIDs}
-      confetti: true
+parameters:
+  dryRun:
+    description: True if you don't want to perform actual WRITE operations
+    default: 'true'
+steps:
+- name: list-azure-load-balancers
+  image: relaysh/azure-network-step-load-balancer-list
+  spec:
+    azure: &azure
+      connection: !Connection { type: azure, name: my-azure-account }
+- name: filter-loadbalancers
+  image: relaysh/core:latest-python
+  spec:
+    loadBalancers: !Output {from: list-azure-load-balancers, name: loadBalancers}
+  inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/azure-delete-empty-loadbalancers/filter-loadbalancers.py
+- name: approval
+  description: Wait for approval
+  type: approval
+  dependsOn: filter-loadbalancers
+  when:
+  - !Fn.equals [!Parameter dryRun, 'false']
+- name: delete-azure-lbs
+  image: relaysh/azure-network-step-load-balancer-delete
+  dependsOn: approval
+  when:
+  - !Fn.equals [!Parameter dryRun, 'false']
+  spec:
+    azure: *azure
+    resourceIDs: !Output {from: filter-loadbalancers, name: resourceIDs}
+    confetti: true

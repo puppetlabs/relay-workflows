@@ -1,47 +1,47 @@
-  apiVersion: v1
-  summary: Delete untagged Azure Virtual Machines
-  description: This workflow looks at all of the Azure Virtual Machines in a given subscription and (optionally) resource group that are untagged and terminates the ones that have no tags. Requires an Azure account with permissions to delete Virtual Machines.
-  homepage: https://github.com/puppetlabs/relay-workflows/tree/master/azure-vm-reaper
-  tags:
-    - cost optimization
+apiVersion: v1
+summary: Delete untagged Azure Virtual Machines
+description: This workflow looks at all of the Azure Virtual Machines in a given subscription and (optionally) resource group that are untagged and terminates the ones that have no tags. Requires an Azure account with permissions to delete Virtual Machines.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/azure-vm-reaper
+tags:
+  - cost optimization
 
-  # Uncomment out this trigger to run this workflow hourly.
-  # triggers:
-  # - name: schedule
-  #   source:
-  #     type: schedule
-  #     schedule: '0 * * * *'
-  #   binding:
-  #     parameters:
-  #       dryRun: true
+# Uncomment out this trigger to run this workflow hourly.
+# triggers:
+# - name: schedule
+#   source:
+#     type: schedule
+#     schedule: '0 * * * *'
+#   binding:
+#     parameters:
+#       dryRun: true
 
-  parameters:
-    dryRun:
-      description: True if you don't want to perform actual WRITE operations
-      default: 'true'
-  steps:
-  - name: list-azure-vms
-    image: relaysh/azure-virtual-machines-step-vm-list
-    spec:
-      azure: &azure
-        connection: !Connection { type: azure, name: my-azure-account }
-  - name: filter-vms
-    image: relaysh/core:latest-python
-    spec:
-      virtualMachines: !Output {from: list-azure-vms, name: virtualMachines}
-    inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/azure-vm-reaper/filter-vms.py
-  - name: approval
-    description: Wait for approval to terminate Azure virtual machines
-    type: approval
-    dependsOn: filter-vms
-    when:
-    - !Fn.equals [!Parameter dryRun, 'false']
-  - name: delete-azure-vms
-    image: relaysh/azure-virtual-machines-step-vm-delete
-    dependsOn: approval
-    when:
-    - !Fn.equals [!Parameter dryRun, 'false']
-    spec:
-      azure: *azure
-      resourceIDs: !Output {from: filter-vms, name: resourceIDs}
-      confetti: true
+parameters:
+  dryRun:
+    description: True if you don't want to perform actual WRITE operations
+    default: 'true'
+steps:
+- name: list-azure-vms
+  image: relaysh/azure-virtual-machines-step-vm-list
+  spec:
+    azure: &azure
+      connection: !Connection { type: azure, name: my-azure-account }
+- name: filter-vms
+  image: relaysh/core:latest-python
+  spec:
+    virtualMachines: !Output {from: list-azure-vms, name: virtualMachines}
+  inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/azure-vm-reaper/filter-vms.py
+- name: approval
+  description: Wait for approval to terminate Azure virtual machines
+  type: approval
+  dependsOn: filter-vms
+  when:
+  - !Fn.equals [!Parameter dryRun, 'false']
+- name: delete-azure-vms
+  image: relaysh/azure-virtual-machines-step-vm-delete
+  dependsOn: approval
+  when:
+  - !Fn.equals [!Parameter dryRun, 'false']
+  spec:
+    azure: *azure
+    resourceIDs: !Output {from: filter-vms, name: resourceIDs}
+    confetti: true
