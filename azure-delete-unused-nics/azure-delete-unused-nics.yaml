@@ -3,7 +3,7 @@ summary: Delete unused Azure network interfaces
 description: This workflow finds unused Azure network interfaces by locating all network interfaces that are not attached to a virtual machine. It then terminates these network interfaces.
 homepage: https://github.com/puppetlabs/relay-workflows/tree/master/azure-delete-unused-nics
 tags:
-  - operations
+  - compliance
 
 # Uncomment out this trigger to run this workflow hourly.
 # triggers:
