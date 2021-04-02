@@ -3,7 +3,7 @@ summary: Connect Dynatrace and Relay to respond to problem events
 description: This workflow configures a webhook trigger to receive problem notifications from Dynatrace, conditionally posts a comment back to the Dynatrace problem, and logs the problem details in Relay.
 homepage: https://github.com/relay-integrations/relay-dynatrace/tree/master/workflows/dynatrace-respond-to-problem
 tags:
-  - operations
+  - auto remediation
 
 parameters:
   state:
