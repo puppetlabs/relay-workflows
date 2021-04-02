@@ -3,7 +3,7 @@ summary: Selectively enforce Puppet run
 description: This workflow selectively enforces a Puppet run when changes are detected 
 homepage: https://github.com/puppetlabs/relay-workflows/tree/master/puppet-selective-enforcement
 tags:
-  - Configuration
+  - auto remediation
 
 parameters:
   host:

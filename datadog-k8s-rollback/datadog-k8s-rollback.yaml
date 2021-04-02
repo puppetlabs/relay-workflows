@@ -3,7 +3,7 @@ summary: Rollback Kubernetes deployment and update Datadog incident
 description: This workflow rolls back a kubernetes deployment to the previous version and updates a Datadog Incident Management incident upon completion.
 homepage: https://github.com/puppetlabs/relay-workflows/tree/master/datadog-k8s-rollback
 tags:
-  - incident response
+  - auto remediation
 
 parameters:
   deployment:

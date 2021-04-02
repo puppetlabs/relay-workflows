@@ -4,7 +4,7 @@ description: >
   This workflow receives webhook events from GitHub and runs Pulumi to preview or create resources in your application.
 homepage: https://github.com/relay-integrations/relay-pulumi/tree/master/workflows/github-relay-ci/
 tags:
-  - configuration
+  - continuous delivery
 
 parameters:
   pulumi_backend_url:
