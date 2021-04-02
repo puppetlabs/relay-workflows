@@ -3,7 +3,7 @@ summary: Remove unused EC2 key pairs
 description: This workflow finds all EC2 key pairs that are not used by an EC2 instance and removes them from the account.
 homepage: https://github.com/puppetlabs/relay-workflows/tree/master/ec2-remove-unused-key-pairs
 tags:
-  - security
+  - compliance
 
 # Uncomment out this trigger to run this workflow hourly.
 # triggers:

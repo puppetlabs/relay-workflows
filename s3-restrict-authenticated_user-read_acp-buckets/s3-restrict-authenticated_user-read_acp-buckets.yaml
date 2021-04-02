@@ -3,7 +3,7 @@ summary: Restrict S3 buckets with READ_ACP permissions to all Authenticated User
 description: This workflow looks at all of the S3 buckets in a given account and restricts those that provide 'READ_ACP' access to all Authenticated Users. Requires an AWS account with permissions to modify S3 buckets.
 homepage: https://github.com/puppetlabs/relay-workflows/tree/master/s3-restrict-authenticated_user-read_acp-buckets
 tags:
-  - security
+  - compliance
 
 # Uncomment out this trigger to run this workflow hourly.
 # triggers:

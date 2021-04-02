@@ -3,7 +3,7 @@ summary: Stop untagged EC2 instances
 description: This workflow looks at all of the EC2 instances in a given account and region and stops the ones that are untagged. Requires an AWS account with permissions to delete stop EC2 instances.
 homepage: https://github.com/puppetlabs/relay-workflows/tree/master/ec2-stop-untagged-instances
 tags:
-  - security
+  - compliance
 
 # Uncomment out this trigger to run this workflow hourly.
 # triggers:

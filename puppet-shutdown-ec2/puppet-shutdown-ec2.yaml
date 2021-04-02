@@ -6,7 +6,7 @@ homepage: https://github.com/puppetlabs/relay-workflows/tree/master/puppet-shutd
 tags:
   - Configuration
   - Incident response
-  - Security
+  - compliance
 
 parameters:
   # From the trigger

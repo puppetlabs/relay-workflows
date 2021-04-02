@@ -3,7 +3,7 @@ summary: Remediate unencrypted S3 buckets
 description: This workflow finds unencrypted S3 buckets and enables default encryption on those buckets.
 homepage: https://github.com/puppetlabs/relay-workflows/tree/master/s3-remediate-unencrypted-buckets
 tags:
-  - security
+  - compliance
 
 # Uncomment out this trigger to run this workflow hourly.
 # triggers:

@@ -3,7 +3,7 @@ summary: Notify about unused keypairs
 description: This workflow finds all EC2 key pairs that are not used by an EC2 instance and notifies a slack channel about them.
 homepage: https://github.com/puppetlabs/relay-workflows/tree/master/ec2-scan-unused-key-pairs
 tags:
-  - security
+  - compliance
 
 triggers:
 # Run at 7AM every Monday

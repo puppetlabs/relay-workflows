@@ -3,7 +3,7 @@ summary: Assume IAM role and stop untagged EC2 instances
 description: This workflow uses AWS Security Token Service (STS) to assume a privileged IAM role which it uses to then stop untagged EC2 instances.
 homepage: https://github.com/puppetlabs/relay-workflows/blob/master/sts-stop-untagged-instances
 tags:
-  - security
+  - compliance
 
 # Uncomment out this trigger to run this workflow hourly.
 # triggers:
