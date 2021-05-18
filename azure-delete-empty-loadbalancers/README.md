@@ -5,10 +5,13 @@ Before you run this workflow, you will need the following:
 - An Azure Service Principal with permissions to manage load balancers.  
 - One or more Azure Load Balancers with zero back end configurations.  
 
-## Run the workflow  
+## Configure the workflow  
 
-Follow these steps to run the workflow:  
-1. Add your Azure credentials as a Connection:  
+![Setting up connections](/azure-delete-empty-loadbalancers/media/connections.gif)
+
+Follow these steps to configure the workflow. Doing this will enable Relay to connect to your Azure account. 
+
+- Add your Azure credentials as a Connection:  
    - Click **Setup**  
    - Find the Connection named `my-azure-account` and click Edit(✎). Use the following values:  
       - **KEY**: `CLIENT ID`  
@@ -21,12 +24,19 @@ Follow these steps to run the workflow:
       - **VALUE**: Enter your Azure Subscription ID   
    - Click **Save**  
 
-2. Click **Run workflow** and wait for the workflow run page to appear.  
-3. Supply following parameters to the modal:  
+
+## Run the workflow
+
+![Run the workflow](/azure-delete-empty-loadbalancers/media/run-azure-lb.gif)
+
+Follow these steps to run this workflow.
+
+- Click **Run workflow** and wait for the workflow run page to appear.  
+- Supply following parameters to the modal:  
    - **KEY**: `dryRun`  
    - **VALUE**: True if you don't want to perform actual WRITE operations  
 
-4. **Warning:** If you run the workflow with the `dryRun` parameter set to
+- **Warning:** If you run the workflow with the `dryRun` parameter set to
    `false`, resources will be immediately terminated.  
 
 ## Run the workflow on a schedule  
