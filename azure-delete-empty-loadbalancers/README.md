@@ -12,7 +12,7 @@ Before you run this workflow, you will need the following:
 Follow these steps to configure the workflow. Doing this will enable Relay to connect to your Azure account. 
 
 - Add your Azure credentials as a Connection:  
-   - Click **Setup**  
+   - Click **Settings** in the side nav to the left
    - Find the Connection named `my-azure-account` and click Edit(✎). Use the following values:  
       - **KEY**: `CLIENT ID`  
       - **VALUE**: Enter your Azure Client ID associated with the service principal  
