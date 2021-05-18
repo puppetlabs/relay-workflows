@@ -1,3 +1,14 @@
+Removing unused resources in your Azure account (like load balancers) can help you avoid unnecessary charges on your monthly Azure bill. Whether it's just you
+picking up after yourself or the dozens of other teams in your company creating resources (and not deleting them *ah hem*) – this workflow can help to keep your
+Azure account clean. 
+
+This workflow will first look for all Azure load balancers in a Subscription (or optionally, resource group). Then, it will filter that list for the load
+balancers that have zero back end configurations. Then, it waits for your approval. Finally, once approval has been granted, it will delete the empty load
+balancers. Problem solved! 
+
+For more details, check out our blog post [Save time and money by automatically deleting Azure Load
+Balancers](https://relay.sh/blog/save-time-and-money-by-automatically-deleting-unused-azure-load-balancers/).
+
 ## Prerequisites
 
 Before you run this workflow, you will need the following:  
@@ -24,10 +35,9 @@ Follow these steps to run the workflow:
 2. Click **Run workflow** and wait for the workflow run page to appear.  
 3. Supply following parameters to the modal:  
    - **KEY**: `dryRun`  
-   - **VALUE**: True if you don't want to perform actual WRITE operations  
+   - **VALUE**: True if you don't want to actually delete resources. 
 
-4. **Warning:** If you run the workflow with the `dryRun` parameter set to
-   `false`, resources will be immediately terminated.  
+4. **Warning:** If you run the workflow with the `dryRun` parameter set to `false`, resources will be immediately terminated.  
 
 ## Run the workflow on a schedule  
 

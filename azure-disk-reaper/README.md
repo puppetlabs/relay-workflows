@@ -1,3 +1,9 @@
+When you delete a virtual machine (VM) in Azure, by default, any disks that are attached to the VM aren't deleted. This helps to prevent data loss due to the unintentional deletion of VMs. However, as a fortunate side effect, you will continue to pay for unattached disks.
+
+Oh? You don't want to pay for disks you'll never use again? This workflow is for you. 
+
+This workflow will first look for all Azure disks in a Subscription (or optionally, resource group). Then, it will filter that list for the disks that aren't attached to a Virtual Machine. Next, it will wait for your approval. Finally, once approval has been granted, it will delete the unused disks. Nice work!
+
 ## Prerequisites
 
 Before you run this workflow, you will need the following:  

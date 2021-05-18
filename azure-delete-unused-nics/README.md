@@ -1,3 +1,11 @@
+Well well. Turns out that when you delete a virtual machine in Azure, the network interface cards (NICs) are not deleted by default. If you create and delete multiple VMs, the unused NICs continue to use the internal IP address leases.
+
+Not only can this be a giant pain if you run out of addresses on your subnet, but it can also be a security concern if that IP address is reserved for a critical service. Either way, it's better to delete unused Azure network interfaces in your account. 
+
+This workflow will first look for all Azure network interfaces in a Subscription (or optionally, resource group). Then, it will filter that list for the NICs that aren't attached to a Virtual Machine. Next, it waits for your approval. Finally, once approval has been granted, it will delete the unused NICs. Good job! 
+
+For more details, check out our blog post, appropriately titled [How to Delete Unused Azure Network Interfaces](https://relay.sh/blog/delete-azure-network-interfaces/).
+
 ## Prerequisites  
 
 Before you run this workflow, you will need the following:  
