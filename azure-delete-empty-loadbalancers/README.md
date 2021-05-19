@@ -45,9 +45,11 @@ You may see a warning that you are missing a required connection. This means you
 Follow these steps to run this workflow.
 
 1. Click **Run workflow** and wait for the workflow run page to appear.  
+
 ![Run workflow](/azure-delete-empty-loadbalancers/media/run-workflow.png)
 
 2. Supply values for the parameters fields when the modal appears:  
+
 ![Supply modal values](/azure-delete-empty-loadbalancers/media/modal-dryrun.png)
 
    - **dryRun** - `true` or `false` 
@@ -59,6 +61,7 @@ Follow these steps to run this workflow.
 ## Run the workflow on a schedule  
 Follow these steps to run this workflow on a schedule:  
 1. Un-comment out the included Trigger block in the workflow YAML. You can do this in the **Code** tab.
+
 ![Code tab](/azure-delete-empty-loadbalancers/media/code-tab.png)
 
 > **TIP:** If you're using the Relay code editor, highlight the `triggers` section and type `⌘ + /` (Mac) or `Ctrl + /` (Windows) to uncomment.  
