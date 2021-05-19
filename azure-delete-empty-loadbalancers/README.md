@@ -20,13 +20,13 @@ You may see a warning that you are missing a required connection. This means you
 
 - Click **Fill in missing connections** or click **Settings** in the side nav.
 
-![Fill in missing connections](/azure-delete-empty-loadbalancers/media/missing-connection.png)
+![Fill in missing connections](/media/missing-connection.png)
 
-![Click settings from side nav](/azure-delete-empty-loadbalancers/media/settings-sidenav.png)
+![Click settings from side nav](/media/settings-sidenav.png)
 
 - Find the Connection named `my-azure-account` and click the plus sign **(+)**. 
 
-![Guide connections](/azure-delete-empty-loadbalancers/media/guide-connections.png)
+![Guide connections](/media/guide-connections.png)
 
 - Fill out the form:  
 
@@ -46,11 +46,11 @@ Follow these steps to run this workflow.
 
 - Click **Run workflow** and wait for the workflow run page to appear.  
 
-    ![Run workflow](/azure-delete-empty-loadbalancers/media/run-workflow-action.png)
+    ![Run workflow](/media/run-workflow-action.png)
 
 - Supply values for the parameters fields when the modal appears:  
 
-    ![Supply modal values](/azure-delete-empty-loadbalancers/media/modal-dryrun.png)
+    ![Supply modal values](/media/dry-run-modal.png)
 
     - **dryRun** - `true` or `false` 
        - `true` if you dont want to actually delete the resources. Use this to test the workflow and ensure it is behaving as expected.
@@ -62,7 +62,7 @@ Follow these steps to run this workflow.
 Follow these steps to run this workflow on a schedule:  
 - Un-comment out the included Trigger block in the workflow YAML. You can do this in the **Code** tab.
 
-![Code tab](/azure-delete-empty-loadbalancers/media/code-tab.png)
+![Code tab](/media/code-tab.png)
 
 > **TIP:** If you're using the Relay code editor, highlight the `triggers` section and type `⌘ + /` (Mac) or `Ctrl + /` (Windows) to uncomment.  
 
