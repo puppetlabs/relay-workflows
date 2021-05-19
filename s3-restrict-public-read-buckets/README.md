@@ -29,7 +29,7 @@ Follow these steps to run the workflow:
 2. Click **Run workflow** and wait for the workflow run page to appear.
 3. Supply following parameters to the modal:  
    - **KEY**: `dryRun`  
-   - **VALUE**: True if you don't want to perform actual WRITE operations  
+   - **VALUE**: True if you dont want to actually delete the resources. Use this to test the workflow and ensure it is behaving as expected.  
 
 4. **Warning:** If you run the workflow with the `dryRun` parameter set to
    `false`, buckets not in compliance with this workflow policy will

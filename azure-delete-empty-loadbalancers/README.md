@@ -30,11 +30,11 @@ You may see a warning that you are missing a required connection. This means you
 
 - Fill out the form:  
 
-      - **Name** - You can’t change this with the form. The name is supplied by the YAML. If you wanted to change it you would need to do so in the Code tab.
-      - **Subscription ID** - Enter your Azure Subscription ID
-      - **Client ID** - Enter your Azure Client ID associated with the service principal  
-      - **Tenant ID** - Enter your Azure Tenant ID associated with the service principal
-      - **Secret** - Enter your Azure Secret associated with the service principal  
+   - **Name** - You can’t change this with the form. The name is supplied by the YAML. If you wanted to change it you would need to do so in the Code tab.
+   - **Subscription ID** - Enter your Azure Subscription ID
+   - **Client ID** - Enter your Azure Client ID associated with the service principal  
+   - **Tenant ID** - Enter your Azure Tenant ID associated with the service principal
+   - **Secret** - Enter your Azure Secret associated with the service principal  
 
 > **TIP** If you need help getting your Azure credentials, check out our [blog post](https://relay.sh/blog/save-time-and-money-by-automatically-deleting-unused-azure-load-balancers/).
 

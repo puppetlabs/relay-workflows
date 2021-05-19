@@ -17,7 +17,7 @@ tags:
 
 parameters:
   dryRun:
-    description: True if you don't want to perform actual WRITE operations
+    description: True if you dont want to actually delete the resources. Use this to test the workflow and ensure it is behaving as expected.
     default: 'true'
 steps:
 - name: list-azure-disks
