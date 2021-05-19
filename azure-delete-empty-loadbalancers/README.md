@@ -21,6 +21,7 @@ You may see a warning that you are missing a required connection. This means you
 1. Click **Fill in missing connections** or click **Settings** in the side nav.
 
 ![Fill in missing connections](/azure-delete-empty-loadbalancers/media/missing-connection.png)
+
 ![Click settings from side nav](/azure-delete-empty-loadbalancers/media/settings-sidenav.png)
 
 2. Find the Connection named `my-azure-account` and click the plus sign **(+)**. Use the following values:  
