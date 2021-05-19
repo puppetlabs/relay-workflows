@@ -46,15 +46,15 @@ Follow these steps to run this workflow.
 
 1. Click **Run workflow** and wait for the workflow run page to appear.  
 
-![Run workflow](/azure-delete-empty-loadbalancers/media/run-workflow-action.png)
+    ![Run workflow](/azure-delete-empty-loadbalancers/media/run-workflow-action.png)
 
 2. Supply values for the parameters fields when the modal appears:  
 
-![Supply modal values](/azure-delete-empty-loadbalancers/media/modal-dryrun.png)
+    ![Supply modal values](/azure-delete-empty-loadbalancers/media/modal-dryrun.png)
 
-   - **dryRun** - `true` or `false` 
-      - `true` if you dont want to actually delete the resources. Use this to test the workflow and ensure it is behaving as expected.
-      - `false` if you want the resources to be immediately deleted.  
+    - **dryRun** - `true` or `false` 
+       - `true` if you dont want to actually delete the resources. Use this to test the workflow and ensure it is behaving as expected.
+       - `false` if you want the resources to be immediately deleted.  
 
 > **WARNING!** Be careful setting `dryRun` to `false`. Though the workflow comes with an approval step, once approved the resources will be terminated. Please use caution.
 
