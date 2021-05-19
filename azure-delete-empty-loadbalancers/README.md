@@ -4,31 +4,31 @@ This workflow will first look for all Azure load balancers in a Subscription (or
 
 For more details, check out our blog post [Save time and money by automatically deleting Azure Load Balancers](https://relay.sh/blog/save-time-and-money-by-automatically-deleting-unused-azure-load-balancers/).
 
-## Prerequisites
+# Prerequisites
 
 Before you run this workflow, you will need the following:  
 - An Azure Subscription  
 - An Azure Service Principal with permissions to manage load balancers.  
 - One or more Azure Load Balancers with zero back end configurations.  
 
-## Configure the workflow  
+# Configure the workflow  
 
 Follow these steps to configure the workflow. Doing this will enable Relay to connect to your Azure account. 
 
 You may see a warning that you are missing a required connection. This means you will need to add your Azure credentials as a Connection.
 
 
-1. Click **Fill in missing connections** or click **Settings** in the side nav.
+- Click **Fill in missing connections** or click **Settings** in the side nav.
 
 ![Fill in missing connections](/azure-delete-empty-loadbalancers/media/missing-connection.png)
 
 ![Click settings from side nav](/azure-delete-empty-loadbalancers/media/settings-sidenav.png)
 
-2. Find the Connection named `my-azure-account` and click the plus sign **(+)**. 
+- Find the Connection named `my-azure-account` and click the plus sign **(+)**. 
 
 ![Guide connections](/azure-delete-empty-loadbalancers/media/guide-connections.png)
 
-3. Fill out the form:  
+- Fill out the form:  
 
       - **Name** - You can’t change this with the form. The name is supplied by the YAML. If you wanted to change it you would need to do so in the Code tab.
       - **Subscription ID** - Enter your Azure Subscription ID
@@ -38,17 +38,17 @@ You may see a warning that you are missing a required connection. This means you
 
 > **TIP** If you need help getting your Azure credentials, check out our [blog post](https://relay.sh/blog/save-time-and-money-by-automatically-deleting-unused-azure-load-balancers/).
 
-4.  Click **Save** 
+-  Click **Save** 
 
-## Run the workflow manually
+# Run the workflow manually
 
 Follow these steps to run this workflow.
 
-1. Click **Run workflow** and wait for the workflow run page to appear.  
+- Click **Run workflow** and wait for the workflow run page to appear.  
 
     ![Run workflow](/azure-delete-empty-loadbalancers/media/run-workflow-action.png)
 
-2. Supply values for the parameters fields when the modal appears:  
+- Supply values for the parameters fields when the modal appears:  
 
     ![Supply modal values](/azure-delete-empty-loadbalancers/media/modal-dryrun.png)
 
@@ -58,9 +58,9 @@ Follow these steps to run this workflow.
 
 > **WARNING!** Be careful setting `dryRun` to `false`. Though the workflow comes with an approval step, once approved the resources will be terminated. Please use caution.
 
-## Run the workflow on a schedule  
+# Run the workflow on a schedule  
 Follow these steps to run this workflow on a schedule:  
-1. Un-comment out the included Trigger block in the workflow YAML. You can do this in the **Code** tab.
+- Un-comment out the included Trigger block in the workflow YAML. You can do this in the **Code** tab.
 
 ![Code tab](/azure-delete-empty-loadbalancers/media/code-tab.png)
 
@@ -77,7 +77,7 @@ Follow these steps to run this workflow on a schedule:
 #       dryRun: true
 ```
 
-2.  Configure the `schedule` trigger:  
+-  Configure the `schedule` trigger:  
    - Supply the run interval in [cron format](https://crontab.guru/).  
    - Configure the following parameter bindings:  
       - Specify whether `dryRun` should be set to `true` or `false`.  
@@ -87,4 +87,4 @@ Follow these steps to run this workflow on a schedule:
       dryRun: true
 ```
 
-3. Click **Save changes**
+- Click **Save changes**
