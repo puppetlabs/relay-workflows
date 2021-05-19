@@ -1,3 +1,12 @@
+[Tagging resources in
+Azure](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/decision-guides/resource-tagging/?toc=/azure/azure-resource-manager/management/toc.json)
+can be super useful for billing, resource organization, or really just remembering what that one VM called `super-important-2153` actually does. That's a great
+start. However, you know what's even better? Tag enforcement. With this workflow, you can save money on your monthly Azure bill and enforce your tagging policy
+by deleting untagged VMs. 
+
+This workflow will first look for all Azure virtual machines in a Subscription (or optionally, resource group). Then, it will filter that list for the untagged
+virtual machines. Then, it waits for your approval. Finally, once approval has been granted, it will delete the untagged virtual machines. Nice!
+
 ## Prerequisites
 
 Before you run this workflow, you will need the following:  
@@ -26,8 +35,7 @@ Follow these steps to run the workflow:
    - **KEY**: `dryRun`  
    - **VALUE**: True if you don't want to perform actual WRITE operations  
 
-4. **Warning:** If you run the workflow with the `dryRun` parameter set to
-   `false`, virtual machines that are untagged will immediately be terminated.  
+4. **Warning:** If you run the workflow with the `dryRun` parameter set to `false`, virtual machines that are untagged will immediately be terminated.  
 
 ## Run the workflow on a schedule  
 

@@ -1,5 +1,8 @@
-This workflow rolls back a kubernetes deployment to the previous
-version and updates a Datadog Incident Management incident upon completion.
+Ok, so picture this. Your team is deploying an application change. It's been reviewed and tested and now rolling out. Everything looks good! However,
+unexpectedly you get alert from Datadog that the  deployment is causing other Kubernetes applications to misbehave. What are you going to do? Well, one option
+is to rollback the deployment and update the incident. 
+
+This workflow rolls back a Kubernetes deployment to the previous version. Next, it updates a Datadog Incident Management incident upon completion. 
 
 ## Prerequisites
 
