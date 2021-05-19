@@ -13,13 +13,17 @@ Before you run this workflow, you will need the following:
 
 ## Configure the workflow  
 
-![Setting up connections](/azure-delete-empty-loadbalancers/media/connections.gif)
-
 Follow these steps to configure the workflow. Doing this will enable Relay to connect to your Azure account. 
 
-- Add your Azure credentials as a Connection:  
-   - Click **Settings** in the side nav to the left
-   - Find the Connection named `my-azure-account` and click Edit(✎). Use the following values:  
+You may see a warning that you are missing a required connection. This means you will need to add your Azure credentials as a Connection.
+
+
+1. Click **Fill in missing connections** or click **Settings** in the side nav.
+
+![Fill in missing connections](/azure-delete-empty-loadbalancers/media/missing-connection.png)
+![Click settings from side nav](/azure-delete-empty-loadbalancers/media/settings-sidenav.png)
+
+2. Find the Connection named `my-azure-account` and click the plus sign **(+)**. Use the following values:  
       - **KEY**: `CLIENT ID`  
       - **VALUE**: Enter your Azure Client ID associated with the service principal  
       - **KEY**: `SECRET`  
@@ -32,8 +36,6 @@ Follow these steps to configure the workflow. Doing this will enable Relay to co
 
 ## Run the workflow manually
 
-![Run the workflow](/azure-delete-empty-loadbalancers/media/run-azure-lb.gif)
-
 Follow these steps to run this workflow.
 
 - Click **Run workflow** and wait for the workflow run page to appear.  
@@ -41,15 +43,14 @@ Follow these steps to run this workflow.
    - **KEY**: `dryRun`  
    - **VALUE**: True if you don't want to perform actual WRITE operations  
 
-> **WARNING!** Be careful setting `dryRun` to `false`. Though the workflow comes with an approval step, once approved the resources will be terminated. Please
-> use caution.
+> **WARNING!** Be careful setting `dryRun` to `false`. Though the workflow comes with an approval step, once approved the resources will be terminated. Please use caution.
 
 ## Run the workflow on a schedule  
 
 Follow these steps to run this workflow on a schedule:  
 -  Un-comment out the Trigger block in the workflow file:  
 
-> TIP: If you're using the Relay code editor, highlight the `triggers` section and type `⌘ + /` (Mac) or `Ctrl + /` (Windows) to uncomment.  
+> **TIP:** If you're using the Relay code editor, highlight the `triggers` section and type `⌘ + /` (Mac) or `Ctrl + /` (Windows) to uncomment.  
 
 ```yaml
 # triggers:
