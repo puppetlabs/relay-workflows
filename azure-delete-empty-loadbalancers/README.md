@@ -46,7 +46,7 @@ Follow these steps to run this workflow.
 
 1. Click **Run workflow** and wait for the workflow run page to appear.  
 
-![Run workflow](/azure-delete-empty-loadbalancers/media/run-workflow.png)
+![Run workflow](/azure-delete-empty-loadbalancers/media/run-workflow-action.png)
 
 2. Supply values for the parameters fields when the modal appears:  
 
