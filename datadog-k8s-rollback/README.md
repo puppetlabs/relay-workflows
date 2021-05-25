@@ -43,9 +43,15 @@ You may see a warning that you are missing a required connection. This means you
 ## Configuring your Kubernetes Connection
 - Find the Connection named `my-kubernetes-cluster` and click the plus sign **(+)**. 
 - Fill out the form
-    - **Cluster server** - URL to your Kubernetes master (`$ kubectl cluster-info` will show this)
-    - **Certificate authority** - PEM-encoded CA certificate for your cluster. This command will display the CA cert: `kubectl config view --raw --flatten -o json | jq -r '.clusters[] | select(.name == "'$(kubectl config current-context)'") | .cluster."certificate-authority-data"' | base64 --decode`
-    - **Token** - Access token. This can be retrieved with the following command: `kubectl config view --raw --minify --flatten -o jsonpath='{.users[].user.auth-provider.config.access-token}'`
+    - **Cluster server** - URL to your Kubernetes master 
+    > How do you get this? Run this from your terminal:
+    > `$ kubectl cluster-info`
+    - **Certificate authority** - PEM-encoded CA certificate for your cluster.
+    > How do you get this? Run this from your terminal:
+    > `$ kubectl config view --raw --flatten -o json | jq -r '.clusters[] | select(.name == "'$(kubectl config current-context)'") | .cluster."certificate-authority-data"' | base64 --decode`
+    - **Token** - Access token. 
+    > How do you get this? Run this from your terminal:    
+    > `kubectl config view --raw --minify --flatten -o jsonpath='{.users[].user.auth-provider.config.access-token}'`
 - Click **Save**
 
 # Run the workflow manually
