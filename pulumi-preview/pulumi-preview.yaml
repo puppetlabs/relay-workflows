@@ -2,9 +2,9 @@ apiVersion: v1
 summary: Connect a Pulumi application in GitHub to Relay for CI/CD
 description: >
   This workflow receives webhook events from GitHub and runs Pulumi to preview or create resources in your application.
-homepage: https://github.com/relay-integrations/relay-pulumi/tree/master/workflows/github-relay-ci/
+homepage: https://github.com/relay-integrations/relay-pulumi/tree/master/workflows/pulumi-preview/
 tags:
-  - configuration
+  - continuous delivery
 
 parameters:
   pulumi_backend_url:

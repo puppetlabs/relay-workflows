@@ -1,47 +1,47 @@
-  apiVersion: v1
-  summary: Delete unused Azure network interfaces
-  description: This workflow finds unused Azure network interfaces by locating all network interfaces that are not attached to a virtual machine. It then terminates these network interfaces.
-  homepage: https://github.com/puppetlabs/relay-workflows/tree/master/azure-delete-unused-nics
-  tags:
-    - security
+apiVersion: v1
+summary: Delete unused Azure network interfaces
+description: Enforce compliance by finding unused Azure network interfaces and terminating them. 
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/azure-delete-unused-nics
+tags:
+  - compliance
 
-  # Uncomment out this trigger to run this workflow hourly.
-  # triggers:
-  # - name: schedule
-  #   source:
-  #     type: schedule
-  #     schedule: '0 * * * *'
-  #   binding:
-  #     parameters:
-  #       dryRun: true
+# Uncomment out this trigger to run this workflow hourly.
+# triggers:
+# - name: schedule
+#   source:
+#     type: schedule
+#     schedule: '0 * * * *'
+#   binding:
+#     parameters:
+#       dryRun: true
 
-  parameters:
-    dryRun:
-      description: True if you don't want to perform actual WRITE operations
-      default: 'true'
-  steps:
-  - name: list-azure-nics
-    image: relaysh/azure-network-step-nic-list
-    spec:
-      azure: &azure
-        connection: !Connection { type: azure, name: my-azure-account }
-  - name: filter-nics
-    image: relaysh/core:latest-python
-    spec:
-      networkInterfaces: !Output {from: list-azure-nics, name: networkInterfaces}
-    inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/azure-delete-unused-nics/filter-nics.py
-  - name: approval
-    description: Wait for approval
-    type: approval
-    dependsOn: filter-nics
-    when:
-    - !Fn.equals [!Parameter dryRun, 'false']
-  - name: delete-azure-nics
-    image: relaysh/azure-network-step-nic-delete
-    dependsOn: approval
-    when:
-    - !Fn.equals [!Parameter dryRun, 'false']
-    spec:
-      azure: *azure
-      resourceIDs: !Output {from: filter-nics, name: resourceIDs}
-      confetti: true
+parameters:
+  dryRun:
+    description: True if you dont want to actually delete the resources. Use this to test the workflow and ensure it is behaving as expected.
+    default: 'true'
+steps:
+- name: list-azure-nics
+  image: relaysh/azure-network-step-nic-list
+  spec:
+    azure: &azure
+      connection: !Connection { type: azure, name: my-azure-account }
+- name: filter-nics
+  image: relaysh/core:latest-python
+  spec:
+    networkInterfaces: !Output {from: list-azure-nics, name: networkInterfaces}
+  inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/azure-delete-unused-nics/filter-nics.py
+- name: approval
+  description: Wait for approval
+  type: approval
+  dependsOn: filter-nics
+  when:
+  - !Fn.equals [!Parameter dryRun, 'false']
+- name: delete-azure-nics
+  image: relaysh/azure-network-step-nic-delete
+  dependsOn: approval
+  when:
+  - !Fn.equals [!Parameter dryRun, 'false']
+  spec:
+    azure: *azure
+    resourceIDs: !Output {from: filter-nics, name: resourceIDs}
+    confetti: true

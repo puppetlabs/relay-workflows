@@ -4,9 +4,9 @@ description: >
   This workflow listens for a sudoers file change on a Puppet run and shuts down the EC2 instance in response
 homepage: https://github.com/puppetlabs/relay-workflows/tree/master/puppet-shutdown-ec2
 tags:
-  - Configuration
+  - auto remediation
   - Incident response
-  - Security
+  - compliance
 
 parameters:
   # From the trigger

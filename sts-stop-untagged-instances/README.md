@@ -26,7 +26,7 @@ Follow these steps to run the workflow:
    - **KEY**: `region`  
    - **VALUE**: The AWS region to run in  
    - **KEY**: `dryRun`  
-   - **VALUE**: True if you don't want to perform actual WRITE operations  
+   - **VALUE**: True if you dont want to actually delete the resources. Use this to test the workflow and ensure it is behaving as expected.  
    - **KEY**: `roleARN`  
    - **VALUE**: The ARN of the IAM role to assume (e.g. arn:aws:iam::180094860577:role/EC2)
 

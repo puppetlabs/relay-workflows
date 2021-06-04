@@ -1,6 +1,6 @@
 apiVersion: v1
 summary: When a Datadog alert is triggered, create a Jira ticket
-description: This workflow responds to a Datadog alert by creating an issue in Jira.
+description: Automatically respond to a Datadog alert by creating an issue in Jira.
 homepage: https://github.com/puppetlabs/relay-workflows/tree/master/datadog-to-jira
 tags:
   - incident response
@@ -32,10 +32,7 @@ steps:
   image: relaysh/jira-step-issue-create
   when: !Fn.equals [!Parameter eventType, query_alert_monitor]
   spec:
-    connection:
-      url: !Secret jiraURL
-      username: !Secret jiraUsername
-      password: !Secret jiraToken
+    connection: !Connection { type: jira, name: my-jira-connection}
     issue:
       fields:
         description: !Fn.convertMarkdown [jira, !Parameter eventBody]

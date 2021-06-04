@@ -3,7 +3,7 @@ summary: Remove unused EC2 key pairs
 description: This workflow finds all EC2 key pairs that are not used by an EC2 instance and removes them from the account.
 homepage: https://github.com/puppetlabs/relay-workflows/tree/master/ec2-remove-unused-key-pairs
 tags:
-  - security
+  - compliance
 
 # Uncomment out this trigger to run this workflow hourly.
 # triggers:
@@ -21,7 +21,7 @@ parameters:
     description: The AWS region to run in
     default: us-east-1
   dryRun:
-    description: True if you don't want to perform actual WRITE operations
+    description: True if you dont want to actually delete the resources. Use this to test the workflow and ensure it is behaving as expected.
     default: 'true'
 
 steps:

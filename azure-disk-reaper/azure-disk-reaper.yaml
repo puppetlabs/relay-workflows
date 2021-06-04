@@ -1,9 +1,9 @@
-  apiVersion: v1
-  summary: Delete unattached Azure Disks
-  description: This workflow looks at all of the Azure Disks in a given subscription and (optionally) resource group that are unattached and terminates them. Requires an Azure account with permissions to delete Disks.
-  homepage: https://github.com/puppetlabs/relay-workflows/tree/master/azure-disk-reaper
-  tags:
-    - cost optimization
+apiVersion: v1
+summary: Delete unattached Azure Disks
+description: Save money by finding unattached Azure Disks in a given subscription and terminating them.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/azure-disk-reaper
+tags:
+  - cost optimization
 
 # Uncomment out this trigger to run this workflow hourly.
 # triggers:
@@ -15,33 +15,33 @@
 #     parameters:
 #       dryRun: true
 
-  parameters:
-    dryRun:
-      description: True if you don't want to perform actual WRITE operations
-      default: 'true'
-  steps:
-  - name: list-azure-disks
-    image: relaysh/azure-disks-step-disk-list
-    spec:
-      azure: &azure
-        connection: !Connection { type: azure, name: my-azure-account }
-  - name: filter-disks
-    image: relaysh/core:latest-python
-    spec:
-      disks: !Output {from: list-azure-disks, name: disks}
-    inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/azure-disk-reaper/filter-disks.py
-  - name: approval
-    description: Wait for approval to terminate disks
-    type: approval
-    dependsOn: filter-disks
-    when:
-    - !Fn.equals [!Parameter dryRun, 'false']
-  - name: delete-disks
-    image: relaysh/azure-disks-step-disk-delete
-    dependsOn: approval
-    when:
-    - !Fn.equals [!Parameter dryRun, 'false']
-    spec:
-      azure: *azure
-      resourceIDs: !Output {from: filter-disks, name: resourceIDs}
-      confetti: true
+parameters:
+  dryRun:
+    description: True if you dont want to actually delete the resources. Use this to test the workflow and ensure it is behaving as expected.
+    default: 'true'
+steps:
+- name: list-azure-disks
+  image: relaysh/azure-disks-step-disk-list
+  spec:
+    azure: &azure
+      connection: !Connection { type: azure, name: my-azure-account }
+- name: filter-disks
+  image: relaysh/core:latest-python
+  spec:
+    disks: !Output {from: list-azure-disks, name: disks}
+  inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/azure-disk-reaper/filter-disks.py
+- name: approval
+  description: Wait for approval to terminate disks
+  type: approval
+  dependsOn: filter-disks
+  when:
+  - !Fn.equals [!Parameter dryRun, 'false']
+- name: delete-disks
+  image: relaysh/azure-disks-step-disk-delete
+  dependsOn: approval
+  when:
+  - !Fn.equals [!Parameter dryRun, 'false']
+  spec:
+    azure: *azure
+    resourceIDs: !Output {from: filter-disks, name: resourceIDs}
+    confetti: true

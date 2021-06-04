@@ -1,52 +1,52 @@
-  apiVersion: v1
-  summary: Delete unattached EBS volumes
-  description: This workflow looks at all of the EBS volumes in a given account and region and selects a subset of those to delete. Requires an AWS account with permissions to delete EBS volumes. The termination criterion is whether any attachments exist on the EBS volume.
-  homepage: https://github.com/puppetlabs/relay-workflows/tree/master/ebs-reaper
-  tags:
-    - cost optimization
+apiVersion: v1
+summary: Delete unattached EBS volumes
+description: This workflow looks at all of the EBS volumes in a given account and region and selects a subset of those to delete. Requires an AWS account with permissions to delete EBS volumes. The termination criterion is whether any attachments exist on the EBS volume.
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/ebs-reaper
+tags:
+  - cost optimization
 
-  # Uncomment out this trigger to run this workflow hourly.
-  # triggers:
-  # - name: schedule
-  #   source:
-  #     type: schedule
-  #     schedule: '0 * * * *'
-  #   binding:
-  #     parameters:
-  #       awsRegion: us-east-1
-  #       dryRun: true
+# Uncomment out this trigger to run this workflow hourly.
+# triggers:
+# - name: schedule
+#   source:
+#     type: schedule
+#     schedule: '0 * * * *'
+#   binding:
+#     parameters:
+#       awsRegion: us-east-1
+#       dryRun: true
 
-  parameters:
-    awsRegion:
-      description: The AWS region to run in
-      default: us-east-1
-    dryRun:
-      description: True if you don't want to perform actual WRITE operations
-      default: 'true'
-  steps:
-  - name: describe-volumes
-    image: relaysh/aws-ebs-step-volumes-describe
-    spec:
-      aws: &aws
-        connection: !Connection { type: aws, name: my-aws-account }
-        region: !Parameter awsRegion
-  - name: filter-volumes
-    image: relaysh/core:latest-python
-    spec:
-      volumes: !Output {from: describe-volumes, name: volumes}
-    inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/ebs-reaper/filter-volumes.py
-  - name: approval
-    description: Wait for approval to terminate volumes
-    type: approval
-    when:
+parameters:
+  awsRegion:
+    description: The AWS region to run in
+    default: us-east-1
+  dryRun:
+    description: True if you dont want to actually delete the resources. Use this to test the workflow and ensure it is behaving as expected.
+    default: 'true'
+steps:
+- name: describe-volumes
+  image: relaysh/aws-ebs-step-volumes-describe
+  spec:
+    aws: &aws
+      connection: !Connection { type: aws, name: my-aws-account }
+      region: !Parameter awsRegion
+- name: filter-volumes
+  image: relaysh/core:latest-python
+  spec:
+    volumes: !Output {from: describe-volumes, name: volumes}
+  inputFile: https://raw.githubusercontent.com/puppetlabs/relay-workflows/master/ebs-reaper/filter-volumes.py
+- name: approval
+  description: Wait for approval to terminate volumes
+  type: approval
+  when:
+  - !Fn.equals [!Parameter dryRun, 'false']
+  dependsOn: filter-volumes
+- name: terminate-volumes
+  image: relaysh/aws-ebs-step-volumes-delete
+  dependsOn: approval
+  when:
     - !Fn.equals [!Parameter dryRun, 'false']
-    dependsOn: filter-volumes
-  - name: terminate-volumes
-    image: relaysh/aws-ebs-step-volumes-delete
-    dependsOn: approval
-    when:
-      - !Fn.equals [!Parameter dryRun, 'false']
-    spec:
-      aws: *aws
-      volumeIDs: !Output {from: filter-volumes, name: volumeIDs}
-      confetti: true
+  spec:
+    aws: *aws
+    volumeIDs: !Output {from: filter-volumes, name: volumeIDs}
+    confetti: true
