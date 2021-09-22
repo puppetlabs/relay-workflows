@@ -7,8 +7,6 @@ tags:
   - continuous delivery
 
 parameters:
-  pulumi_backend_url:
-    description: Point at a self-hosted Pulumi backend service
   event_payload:
     description: Payload of webhook event, filled in by trigger
   pulumi_commandline:
@@ -22,21 +20,21 @@ triggers:
       image: relaysh/github-trigger-event-sink
     binding:
       parameters:
-        event_payload: !Data event_payload
+        event_payload: ${event.event_payload}
 
 steps:
   - name: pulumi-run
     image: relaysh/pulumi-step-run
     spec:
-      pulumi_access_token: !Secret pulumi_access_token
-      github_token: !Secret github_access_token
-      pulumi_backend_url: !Parameter pulumi_backend_url
-      event_payload: !Parameter event_payload
-      pulumi_commandline: !Parameter pulumi_commandline
+      pulumi_access_token: ${secrets.pulumi_access_token}
+      github_token: ${secrets.github_access_token}
+      pulumi_backend_url: ${secrets.pulumi_backend_url}
+      event_payload: ${parameters.event_payload}
+      pulumi_commandline: ${parameters.pulumi_commandline}
   - name: slack-output
     image: relaysh/slack-step-message-send
     spec:
-      connection: !Connection { type: slack, name: my-workspace }
+      connection: ${connections.slack.my-workspace}
       channel: prog-relay-testing
-      message: !Output {from: pulumi-run, name: output}
+      message: ${outputs.pulumi-run.output}
       username: relayerbot
