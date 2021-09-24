@@ -6,8 +6,6 @@ tags:
   - incident response
 
 parameters:
-  phoneNumber:
-    description: the phone number to deliver the message to
   incidentTitle:
     description: a brief summary of the incident
   incidentUrgency:
@@ -18,13 +16,10 @@ parameters:
     description: the service that triggered the incident
 
 locals:
-  message: &message !Fn.concat
-  - '⚠️ '
-  - !Parameter incidentTitle
-  - "\nAffected service: "
-  - !Parameter serviceName
-  - "\nDetails: "
-  - !Parameter incidentURL
+  message: &message |
+    ⚠️ ${parameters.incidentTitle}
+    Affected service: ${parameters.serviceName}
+    Details: ${parameters.incidentURL}
 
 triggers:
 - name: pagerduty
@@ -33,18 +28,18 @@ triggers:
     image: relaysh/pagerduty-trigger-incident-triggered
   binding:
     parameters:
-      incidentTitle: !Data title
-      incidentUrgency: !Data urgency
-      incidentURL: !Data appURL
-      serviceName: !Data serviceName
+      incidentTitle: ${event.title}
+      incidentUrgency: ${event.urgency}
+      incidentURL: ${event.appURL}
+      serviceName: ${event.serviceName}
 
 steps:
 - name: notify-via-twilio
   image: relaysh/twilio-step-send-sms
   spec:
     twilio: &twilio
-      accountSID: !Secret twilioAccountSID
-      authToken: !Secret twilioAuthToken
-    from: !Secret twilioPhoneNumber
-    to: !Parameter phoneNumber
+      accountSID: ${secrets.twilioAccountSID}
+      authToken: ${secrets.twilioAuthToken}
+    from: ${secrets.twilioPhoneNumberFrom}
+    to: ${secrets.twilioPhoneNumberTo}
     body: *message
