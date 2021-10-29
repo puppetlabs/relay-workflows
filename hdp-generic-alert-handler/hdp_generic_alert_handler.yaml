@@ -1,0 +1,36 @@
+## Full guide available at https://relay.sh/docs/getting-started
+apiVersion: v1
+summary: This is a generic handler for any HDP event type. You can make your own handlers for more specific events.
+parameters:
+  message:
+    default: "Hello from the HDP!"
+  url:
+    default: ""
+  username:
+    default: "HDP Via Relay"
+  channel:
+    default: "#hdp-alerts"
+triggers:
+- name: hdp-generic-alert-webhook
+  source:
+    type: webhook
+    image: relaysh/stdlib-trigger-json
+  binding:
+    parameters:
+      message: !Data message
+      url: !Data url
+steps:
+- name: slack-message-send
+  image: relaysh/slack-step-message-send
+  spec:
+    connection: !Connection [slack, slack-connection]
+    blocks: >
+      [{
+        "type": "section", 
+        "text": {
+          "type": "mrkdwn",
+          "text": "${parameters.message} - <${parameters.url}|click here to view more.>"
+        }
+      }]
+    username: !Parameter username
+    channel: !Parameter channel
