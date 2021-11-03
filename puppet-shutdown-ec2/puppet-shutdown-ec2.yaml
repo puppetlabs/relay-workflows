@@ -39,7 +39,7 @@ steps:
       resourceStatuses: !Parameter resourceStatuses
       watchType: !Parameter watchType
     input:
-    - DETECTED_CHANGES=$(ni get | jq --arg type "$( ni get -p {.watchType} )" -r '.resourceStatuses | values | map(.containment_path | (to_entries[] | select(.value | startswith("\($type)[")) | .key) as $key | .[:$key+1] | join("/")) | unique[]')
+    - DETECTED_CHANGES=$(ni get | jq --arg type "$( ni get -p {.watchType} )" -r '.resourceStatuses | values | map(select(.corrective_change == true)) | map(.containment_path | (to_entries[] | select(.value | startswith("\($type)[")) | .key) as $key | .[:$key+1] | join("/")) | unique | join(",")')
     - 'echo "Detected changes, if any: ${DETECTED_CHANGES}"'
     - 'if [ x = x${DETECTED_CHANGES} ] ; then ni output set -k detectedChanges -v none; else ni output set -k detectedChanges -v "${DETECTED_CHANGES}" ; fi'
   - name: lookup-ec2-instance
@@ -49,19 +49,19 @@ steps:
     spec:
       aws: &aws
         connection: !Connection { type: aws, name: my-aws-account }
-        region: !Secret awsRegion 
+        region: !Secret awsRegion
       filters:
-        dnsName: !Parameter host
+        private-dns-name: !Parameter host
   - name: output-instance-id
     image: relaysh/core:latest-python
     spec:
-      instances: !Output { from: lookup-ec2-instance, name: instances } 
+      instances: !Output { from: lookup-ec2-instance, name: instances }
     when:
     - !Fn.notEquals [ !Output { from: lookup-ec2-instance, name: instances }, ""]      
     input:
      - echo -e "from relay_sdk import Interface, Dynamic as D\nrelay=Interface()\nrelay.outputs.set('instanceID', relay.get(D.instances)[0]['InstanceId'])" | python
   - name: approval
-    description: Wait for approval
+    description: Wait for instance shutdown approval
     type: approval
     dependsOn:
     - output-instance-id
@@ -70,5 +70,6 @@ steps:
     image: relaysh/aws-ec2-step-instances-stop
     spec:
       aws: *aws
-      instanceIDs: !Output { from: output-instance-id, name: instanceID } 
+      instanceIDs:
+      - !Output { from: output-instance-id, name: instanceID }
     dependsOn: approval
