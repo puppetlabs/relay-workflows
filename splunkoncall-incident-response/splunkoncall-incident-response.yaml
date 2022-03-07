@@ -1,0 +1,134 @@
+apiVersion: v1
+summary: When a Splunk On-Call incident is triggered, initiate a reponse policy
+description: >
+  This workflow responds to a Splunk On-Call incident by creating a Jira ticket and Slack channel for the incident, and posting the details back to the incident timeline
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/victorops-incident-response/
+tags:
+  - incident response
+
+parameters:
+  jiraProject:
+    description: 'The Jira Project ticker under which incident tickets should be filed.'
+    default: 'RLY'
+  jiraIssueSummary:
+    description: 'The Jira ticket title. Will be postfixed with the Splunk On-Call incident ID.'
+    default: 'Issue created to track Splunk On-Call incident '
+  jiraIssueType:
+    description: 'The Jira ticket type to be created.'
+    default: 'Task'
+  slackRoom:
+    description: 'The incident response slack room name. Will be postfixed with the Splunk On-Call incident ID'
+    default: 'team-relay-production-incident-'
+  slackRoomTopic:
+    description: 'The channel topic to be set in the slack room. Will be postfixed with the jira ticket'
+    default: 'A production incident has occurred and jira ticket created. The Jira ticket is: '
+
+  incidentID:
+    description: 'The Splunk On-Call incident ID. Will be automatically filled in.'
+  incidentTitle:
+    description: 'The Splunk On-Call incident Title. Will be automatically filled in.'
+  incidentMessage:
+    description: 'Additional context provided when the incident was created'
+  incidentUrgency:
+    description: 'The Splunk On-Call incident urgency. Will be automatically filled in.'
+  incidentURL:
+    description: 'The Splunk On-Call incident URL. Will be automatically filled in.'
+  incidentEntityID:
+    description: 'Splunk On-Call internal entity ID, to associate updates with the incident via API.'
+
+locals:
+  message: &message !Fn.concat
+  - ':warning: *<'
+  - ${parameters.incidentURL}
+  - '|'
+  - ${parameters.incidentTitle}
+  - '>* :warning:'
+  - "\n:information_desk_person: Additional context: "
+  - ${parameters.incidentMessage}
+
+triggers:
+- name: victorops-incident
+  source:
+    type: webhook
+    image: relaysh/splunkoncall-trigger-incident-triggered
+  binding:
+    parameters:
+      incidentID: ${event.incident.incident_id}
+      incidentTitle: ${event.alert.entity_display_name}
+      incidentMessage: ${event.alert.state_message}
+      incidentUrgency: ${event.alert.entity_state}
+      incidentURL: !Fn.concat
+        - "https://portal.victorops.com/ui/"
+        - ${event.alert.vo_organization_id}
+        - "/incident/"
+        - ${event.incident.incident_id}
+        - "/details"
+      incidentEntityID: ${event.alert.entity_id}
+
+steps:
+# Create the jira ticket in the correct project
+- name: create-jira-ticket
+  image: relaysh/jira-step-issue-create
+  spec:
+    connection: ${connections.jira.'my-jira-account'}
+    issue:
+      fields:
+        summary: !Fn.concat
+          - ${parameters.jiraIssueSummary}
+          - ${parameters.incidentID}
+        type:
+          name: ${parameters.jiraIssueType}
+        project:
+          key: ${parameters.jiraProject}
+# Create the incident slack room, set the topic, and invite the on-call person
+- name: create-slack-room
+  dependsOn:
+    - create-jira-ticket
+  image: relaysh/slack-step-channel-create
+  spec:
+    connection: ${connections.slack.'my-slack-account'}
+    channel: !Fn.concat
+      - ${parameters.slackRoom}
+      - ${parameters.incidentID}
+    topic: !Fn.concat
+      - ${parameters.slackRoomTopic}
+      - ${outputs.'create-jira-ticket'.issue}
+# Message the new slack room with the incident details and process
+- name: message-slack-room
+  dependsOn: create-slack-room
+  image: relaysh/slack-step-message-send
+  spec:
+    connection: ${connections.slack.'my-slack-account'}
+    channel: ${outputs.create-slack-room.channelID}
+    message: *message
+    username: 'Relay workflow'
+# Let the general room know there's a new incident channel
+- name: message-general-slack
+  dependsOn: create-slack-room
+  image: relaysh/slack-step-message-send
+  spec:
+    connection: ${connections.slack.'my-slack-account'}
+    channel: general
+    message: !Fn.concat
+      - ":rotating_light: New incident declared: "
+      - ${parameters.incidentTitle}
+      - ". To participate, join channel: #"
+      - !Fn.concat
+        - ${parameters.slackRoom}
+        - ${parameters.incidentID}
+# Submit a change event back to Splunk On-Call indicating that the process was initiated
+- name: update-timeline
+  dependsOn: message-slack-room
+  image: relaysh/splunkoncall-step-incident-update
+  spec:
+    endpointURL: ${secrets.endpointURL}
+    routingKey: "relay"
+    entityID: ${parameters.incidentEntityID}
+    entityDisplayName: "Incident comms channels ready"
+    stateMessage: !Fn.concat
+      - "Automated incident response via Relay. JIRA created: "
+      - ${outputs.create-jira-ticket.issue}
+      - " Slack room created: #"
+      - !Fn.concat
+        - ${parameters.slackRoom}
+        - ${parameters.incidentID}
