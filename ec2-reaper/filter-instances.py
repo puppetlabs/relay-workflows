@@ -153,7 +153,7 @@ if __name__ == '__main__':
         raw_instances = relay.get(D.instances)
     except:
         print('No instances found. Exiting.')
-        exit(1)
+        exit(0)
 
     instances = filter(lambda i: i['State']['Name'] == 'running', raw_instances)
     for instance in instances:
