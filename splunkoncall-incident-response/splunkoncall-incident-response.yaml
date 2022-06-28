@@ -2,7 +2,7 @@ apiVersion: v1
 summary: When a Splunk On-Call incident is triggered, initiate a reponse policy
 description: >
   This workflow responds to a Splunk On-Call incident by creating a Jira ticket and Slack channel for the incident, and posting the details back to the incident timeline
-homepage: https://github.com/puppetlabs/relay-workflows/tree/master/victorops-incident-response/
+homepage: https://github.com/puppetlabs/relay-workflows/tree/master/splunkoncall-incident-response/
 tags:
   - incident response
 
@@ -44,7 +44,7 @@ locals:
 
 
 triggers:
-- name: victorops-incident
+- name: splunkoncall-incident
   source:
     type: webhook
     image: relaysh/splunkoncall-trigger-incident-triggered
